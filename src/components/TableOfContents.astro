@@ -1,0 +1,316 @@
+---
+export interface Props {
+  headings: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { headings } = Astro.props;
+
+// Filter to only show H2 and H3 headings for better UX
+const filteredHeadings = headings.filter(heading => heading.depth <= 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <aside class="toc">
+    <div class="toc__content">
+      <h3 class="toc__title">
+        <i class="fas fa-list"></i>
+        On this page
+      </h3>
+      
+      <!-- Mobile dropdown toggle -->
+      <button 
+        id="toc-mobile-toggle"
+        class="toc__mobile-toggle"
+        aria-expanded="false"
+        aria-label="Toggle table of contents"
+      >
+        <i class="fas fa-list"></i>
+        <span>Contents</span>
+        <i class="fas fa-chevron-down toc__mobile-icon"></i>
+      </button>
+      
+      <nav class="toc__nav" aria-label="Table of contents">
+        <ul class="toc__list">
+          {filteredHeadings.map(heading => (
+            <li class={`toc__item toc__item--level-${heading.depth}`}>
+              <a 
+                href={`#${heading.slug}`}
+                class="toc__link"
+                data-heading-id={heading.slug}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </aside>
+)}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tocLinks = document.querySelectorAll('.toc__link');
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const mobileToggle = document.getElementById('toc-mobile-toggle');
+    const tocNav = document.querySelector('.toc__nav');
+    
+    if (!tocLinks.length || !headings.length) return;
+    
+    // Intersection Observer for active link highlighting
+    const observerOptions = {
+      rootMargin: '-20% 0% -35% 0%',
+      threshold: 0
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const tocLink = document.querySelector(`[data-heading-id="${id}"]`);
+        
+        if (entry.isIntersecting) {
+          // Remove active class from all links
+          tocLinks.forEach(link => link.classList.remove('toc__link--active'));
+          // Add active class to current link
+          if (tocLink) {
+            tocLink.classList.add('toc__link--active');
+          }
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all headings
+    headings.forEach(heading => {
+      if (heading.id) {
+        observer.observe(heading);
+      }
+    });
+    
+    // Smooth scroll for TOC links
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        if (!href) return;
+        
+        const targetId = href.substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          const headerOffset = 80; // Account for sticky header
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+          
+          // Close mobile TOC if open
+          if (window.innerWidth <= 1024 && tocNav) {
+            tocNav.classList.remove('toc__nav--open');
+            if (mobileToggle) {
+              mobileToggle.setAttribute('aria-expanded', 'false');
+              const icon = mobileToggle.querySelector('.toc__mobile-icon') as HTMLElement;
+              if (icon) {
+                icon.style.transform = 'rotate(0deg)';
+              }
+            }
+          }
+        }
+      });
+    });
+    
+    // Mobile toggle functionality
+    if (mobileToggle && tocNav) {
+      mobileToggle.addEventListener('click', () => {
+        const isOpen = tocNav.classList.contains('toc__nav--open');
+        const icon = mobileToggle.querySelector('.toc__mobile-icon') as HTMLElement;
+        
+        tocNav.classList.toggle('toc__nav--open');
+        mobileToggle.setAttribute('aria-expanded', String(!isOpen));
+        
+        if (icon) {
+          icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+      });
+    }
+    
+    // Close mobile TOC when clicking outside
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 1024 && tocNav && mobileToggle) {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.toc') && tocNav.classList.contains('toc__nav--open')) {
+          tocNav.classList.remove('toc__nav--open');
+          mobileToggle.setAttribute('aria-expanded', 'false');
+          const icon = mobileToggle.querySelector('.toc__mobile-icon') as HTMLElement;
+          if (icon) {
+            icon.style.transform = 'rotate(0deg)';
+          }
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .toc {
+    grid-area: toc;
+    height: calc(100vh - var(--header-height));
+    position: sticky;
+    top: var(--header-height);
+    overflow-y: auto;
+  }
+  
+  .toc__content {
+    padding: var(--space-s);
+  }
+  
+  .toc__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--step-0);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-s);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  
+  .toc__title i {
+    color: var(--color-accent);
+  }
+  
+  .toc__nav {
+    display: block;
+  }
+  
+  .toc__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .toc__item {
+    margin: 0;
+  }
+  
+  .toc__item--level-2 {
+    margin-left: 0;
+  }
+  
+  .toc__item--level-3 {
+    margin-left: var(--space-s);
+  }
+  
+  .toc__link {
+    display: block;
+    padding: var(--space-2xs) var(--space-xs);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--step--1);
+    line-height: 1.4;
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-3xs);
+  }
+  
+  .toc__link:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-secondary);
+    text-decoration: none;
+  }
+  
+  .toc__link--active {
+    color: var(--color-accent);
+    background-color: var(--color-bg-accent);
+    border-left-color: var(--color-accent);
+    font-weight: 500;
+  }
+  
+  .toc__mobile-toggle {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--space-xs) var(--space-s);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--step--1);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  
+  .toc__mobile-toggle:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .toc__mobile-icon {
+    transition: transform var(--transition-medium);
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 1024px) {
+    .toc {
+      position: relative;
+      height: auto;
+      grid-area: auto;
+      background-color: var(--color-bg-primary);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-l);
+    }
+    
+    .toc__content {
+      padding: var(--space-s);
+    }
+    
+    .toc__title {
+      display: none;
+    }
+    
+    .toc__mobile-toggle {
+      display: flex;
+    }
+    
+    .toc__nav {
+      display: none;
+      margin-top: var(--space-s);
+      background-color: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-s);
+    }
+    
+    .toc__nav--open {
+      display: block;
+    }
+  }
+  
+  /* Scrollbar styling */
+  .toc::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .toc::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+  
+  .toc::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 3px;
+  }
+  
+  .toc::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-dark);
+  }
+</style>

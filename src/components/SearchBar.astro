@@ -1,0 +1,406 @@
+---
+// Search bar component for Pagefind integration
+---
+
+<div class="search-bar">
+  <div class="search-bar__input-wrapper">
+    <i class="fas fa-search search-bar__icon"></i>
+    <input 
+      type="search" 
+      id="search-input"
+      class="search-bar__input"
+      placeholder="Search..."
+      aria-label="Search"
+      autocomplete="off"
+    />
+    <button 
+      id="search-clear"
+      class="search-bar__clear"
+      aria-label="Clear search"
+      style="display: none;"
+    >
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  
+  <!-- Search results overlay -->
+  <div id="search-results" class="search-results" style="display: none;">
+    <div class="search-results__content">
+      <div class="search-results__header">
+        <span class="search-results__count"></span>
+        <button 
+          id="search-close"
+          class="search-results__close"
+          aria-label="Close search results"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="search-results-list" class="search-results__list">
+        <!-- Results will be populated by Pagefind -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pagefind integration script -->
+<script>
+  let pagefind: any;
+  
+  async function initializeSearch() {
+    if (!pagefind) {
+      try {
+        // Use a dynamic import that won't fail during build
+        if (typeof window !== 'undefined') {
+          // @ts-ignore - Pagefind is loaded at runtime
+          pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+        }
+      } catch (error) {
+        console.warn('Pagefind not available:', error);
+        return null;
+      }
+    }
+    return pagefind;
+  }
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchClear = document.getElementById('search-clear') as HTMLButtonElement;
+    const searchClose = document.getElementById('search-close') as HTMLButtonElement;
+    const searchResults = document.getElementById('search-results') as HTMLDivElement;
+    const searchResultsList = document.getElementById('search-results-list') as HTMLDivElement;
+    const searchResultsCount = document.querySelector('.search-results__count') as HTMLSpanElement;
+    
+    if (!searchInput) return;
+    
+    let searchTimeout: NodeJS.Timeout;
+    let currentQuery = '';
+    
+    // Initialize Pagefind
+    const pf = await initializeSearch();
+    
+    // Search function
+    async function performSearch(query: string) {
+      if (!pf || !query.trim()) {
+        hideResults();
+        return;
+      }
+      
+      try {
+        const search = await pf.search(query);
+        displayResults(search);
+      } catch (error) {
+        console.error('Search error:', error);
+        hideResults();
+      }
+    }
+    
+    // Display search results
+    async function displayResults(search: any) {
+      if (!search.results || !search.results.length) {
+        if (searchResultsList) {
+          searchResultsList.innerHTML = '<div class="search-results__empty">No results found</div>';
+        }
+        if (searchResultsCount) {
+          searchResultsCount.textContent = 'No results';
+        }
+        showResults();
+        return;
+      }
+      
+      if (searchResultsCount) {
+        searchResultsCount.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+      }
+      
+      const resultsHTML = await Promise.all(
+        search.results.slice(0, 10).map(async (result: any) => {
+          const data = await result.data();
+          return `
+            <a href="${data.url}" class="search-result">
+              <div class="search-result__title">${data.meta.title || 'Untitled'}</div>
+              <div class="search-result__excerpt">${data.excerpt}</div>
+              <div class="search-result__url">${data.url}</div>
+            </a>
+          `;
+        })
+      );
+      
+      if (searchResultsList) {
+        searchResultsList.innerHTML = resultsHTML.join('');
+      }
+      showResults();
+    }
+    
+    // Show/hide results
+    function showResults() {
+      if (searchResults) {
+        searchResults.style.display = 'block';
+        document.body.classList.add('search-active');
+      }
+    }
+    
+    function hideResults() {
+      if (searchResults) {
+        searchResults.style.display = 'none';
+        document.body.classList.remove('search-active');
+      }
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const query = target.value;
+      currentQuery = query;
+      
+      // Show/hide clear button
+      if (searchClear) {
+        searchClear.style.display = query ? 'flex' : 'none';
+      }
+      
+      // Debounce search
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        if (currentQuery === query) {
+          performSearch(query);
+        }
+      }, 300);
+    });
+    
+    searchInput.addEventListener('focus', () => {
+      if (currentQuery && searchResultsList && searchResultsList.children.length > 0) {
+        showResults();
+      }
+    });
+    
+    if (searchClear) {
+      searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        currentQuery = '';
+        if (searchClear) {
+          searchClear.style.display = 'none';
+        }
+        hideResults();
+        searchInput.focus();
+      });
+    }
+    
+    if (searchClose) {
+      searchClose.addEventListener('click', hideResults);
+    }
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideResults();
+      }
+    });
+    
+    // Close when clicking outside
+    if (searchResults) {
+      searchResults.addEventListener('click', (e) => {
+        if (e.target === searchResults) {
+          hideResults();
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .search-bar {
+    position: relative;
+    width: 100%;
+  }
+  
+  .search-bar__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-bar__icon {
+    position: absolute;
+    left: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: var(--step--1);
+    z-index: 1;
+  }
+  
+  .search-bar__input {
+    width: 100%;
+    padding: var(--space-xs) var(--space-xl) var(--space-xs) var(--space-l);
+    border: 1px solid var(--color-border-medium);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-size: var(--step--1);
+    transition: all var(--transition-fast);
+  }
+  
+  .search-bar__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background-color: var(--color-bg-primary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  }
+  
+  .search-bar__input::placeholder {
+    color: var(--color-text-muted);
+  }
+  
+  /* Hide native search input clear button */
+  .search-bar__input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .search-bar__input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .search-bar__clear {
+    position: absolute;
+    right: var(--space-xs);
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: var(--space-2xs);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+  }
+  
+  .search-bar__clear:hover {
+    color: var(--color-text-primary);
+  }
+  
+  /* Search Results Overlay */
+  .search-results {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: calc(var(--header-height) + var(--space-s));
+  }
+  
+  .search-results__content {
+    background-color: var(--color-surface-elevated);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 600px;
+    max-height: 70vh;
+    margin: 0 var(--space-s);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-results__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-s);
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-secondary);
+  }
+  
+  .search-results__count {
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+  
+  .search-results__close {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: var(--space-2xs);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+  }
+  
+  .search-results__close:hover {
+    color: var(--color-text-primary);
+  }
+  
+  .search-results__list {
+    overflow-y: auto;
+    flex: 1;
+  }
+  
+  .search-results__empty {
+    padding: var(--space-l);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+  
+  .search-result {
+    display: block;
+    padding: var(--space-s);
+    border-bottom: 1px solid var(--color-border-light);
+    text-decoration: none;
+    color: inherit;
+    transition: background-color var(--transition-fast);
+  }
+  
+  .search-result:hover {
+    background-color: var(--color-bg-secondary);
+    text-decoration: none;
+  }
+  
+  .search-result:last-child {
+    border-bottom: none;
+  }
+  
+  .search-result__title {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-3xs);
+    font-size: var(--step-0);
+  }
+  
+  .search-result__excerpt {
+    color: var(--color-text-secondary);
+    font-size: var(--step--1);
+    line-height: 1.4;
+    margin-bottom: var(--space-2xs);
+  }
+  
+  .search-result__url {
+    color: var(--color-accent);
+    font-size: var(--step--2);
+    opacity: 0.8;
+  }
+  
+  /* Prevent body scroll when search is active */
+  body.search-active {
+    overflow: hidden;
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .search-results {
+      padding-top: calc(var(--header-height) + var(--space-xs));
+    }
+    
+    .search-results__content {
+      margin: 0 var(--space-xs);
+      max-height: 80vh;
+    }
+  }
+</style>

@@ -1,0 +1,314 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get all content files and organize by category
+const allContent = await getCollection('docs');
+
+// Group content by category
+const contentByCategory: Record<string, any[]> = allContent.reduce((acc: Record<string, any[]>, entry) => {
+  const category = entry.data.category || 'Uncategorized';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(entry);
+  return acc;
+}, {});
+
+// Sort categories and entries
+const sortedCategories = Object.keys(contentByCategory).sort();
+sortedCategories.forEach(category => {
+  contentByCategory[category].sort((a: any, b: any) => a.data.title.localeCompare(b.data.title));
+});
+
+const currentPath = Astro.url.pathname;
+---
+
+<aside id="sidebar" class="sidebar">
+  <div id="sidebar-overlay" class="sidebar__overlay"></div>
+  
+  <nav class="sidebar__nav" aria-label="Main navigation">
+    <div class="sidebar__content">
+      <!-- Home link -->
+      <a 
+        href="/" 
+        class={`sidebar__link sidebar__link--home ${currentPath === '/' ? 'sidebar__link--active' : ''}`}
+      >
+        <span>Home</span>
+      </a>
+      
+      <!-- Categories -->
+      {sortedCategories.map(category => (
+        <div class="sidebar__category">
+          <button 
+            class="sidebar__category-toggle"
+            aria-expanded="true"
+            data-category={category.toLowerCase().replace(/\s+/g, '-')}
+          >
+            <i class="fas fa-chevron-down sidebar__category-icon"></i>
+            <span class="sidebar__category-title">{category}</span>
+          </button>
+          
+          <ul class="sidebar__category-list">
+            {contentByCategory[category].map((entry: any) => {
+              const href = `/docs/${entry.slug}`;
+              const isActive = currentPath === href || currentPath === href + '/';
+              
+              return (
+                <li class="sidebar__item">
+                  <a 
+                    href={href}
+                    class={`sidebar__link ${isActive ? 'sidebar__link--active' : ''}`}
+                  >
+                    <span class="sidebar__link-text">{entry.data.title}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+      
+      <!-- About link -->
+      <a 
+        href="/about" 
+        class={`sidebar__link sidebar__link--about ${currentPath === '/about' || currentPath === '/about/' ? 'sidebar__link--active' : ''}`}
+      >
+        <span>About</span>
+      </a>
+    </div>
+  </nav>
+</aside>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Category toggle functionality
+    const categoryToggles = document.querySelectorAll('.sidebar__category-toggle');
+    
+    categoryToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const category = toggle.closest('.sidebar__category') as HTMLElement;
+        const icon = toggle.querySelector('.sidebar__category-icon') as HTMLElement;
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        
+        // Toggle expanded state
+        toggle.setAttribute('aria-expanded', String(!isExpanded));
+        if (category) {
+          category.classList.toggle('sidebar__category--collapsed');
+        }
+        
+        // Animate icon
+        if (icon) {
+          icon.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+        
+        // Store preference
+        const toggleElement = toggle as HTMLElement;
+        const categoryId = toggleElement.dataset.category;
+        if (categoryId) {
+          localStorage.setItem(`sidebar-category-${categoryId}`, String(!isExpanded));
+        }
+      });
+    });
+    
+    // Restore category states from localStorage
+    categoryToggles.forEach(toggle => {
+      const toggleElement = toggle as HTMLElement;
+      const categoryId = toggleElement.dataset.category;
+      const isCollapsed = localStorage.getItem(`sidebar-category-${categoryId}`) === 'false';
+      
+      if (isCollapsed) {
+        const category = toggle.closest('.sidebar__category') as HTMLElement;
+        const icon = toggle.querySelector('.sidebar__category-icon') as HTMLElement;
+        
+        toggle.setAttribute('aria-expanded', 'false');
+        if (category) {
+          category.classList.add('sidebar__category--collapsed');
+        }
+        if (icon) {
+          icon.style.transform = 'rotate(-90deg)';
+        }
+      }
+    });
+    
+    // Auto-close mobile sidebar when clicking a link
+    const sidebarLinks = document.querySelectorAll('.sidebar__link');
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('sidebar--open')) {
+          sidebar.classList.remove('sidebar--open');
+          document.body.classList.remove('sidebar-open');
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .sidebar {
+    grid-area: sidebar;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border-light);
+    overflow-y: auto;
+  }
+  
+  .sidebar__overlay {
+    display: none;
+  }
+  
+  .sidebar__nav {
+    height: 100%;
+  }
+  
+  .sidebar__content {
+    padding: var(--space-s);
+  }
+  
+  .sidebar__link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-s);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    font-size: var(--step--1);
+    margin-bottom: var(--space-3xs);
+  }
+  
+  .sidebar__link:hover {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+  
+  .sidebar__link--active {
+    background-color: var(--color-bg-accent);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  
+  .sidebar__link--home,
+  .sidebar__link--about {
+    font-weight: 500;
+    margin-bottom: var(--space-s);
+  }
+  
+
+  
+  .sidebar__category {
+    margin-bottom: var(--space-s);
+  }
+  
+  .sidebar__category-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    width: 100%;
+    padding: var(--space-xs) var(--space-s);
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    font-weight: 600;
+    font-size: var(--step--1);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+    text-align: left;
+  }
+  
+  .sidebar__category-toggle:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+  
+  .sidebar__category-icon {
+    width: 1rem;
+    text-align: center;
+    transition: transform var(--transition-medium);
+    flex-shrink: 0;
+  }
+  
+  .sidebar__category-title {
+    flex: 1;
+  }
+  
+  .sidebar__category-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-2xs) 0 0 0;
+    overflow: hidden;
+    transition: all var(--transition-medium);
+  }
+  
+  .sidebar__category--collapsed .sidebar__category-list {
+    max-height: 0;
+    margin: 0;
+  }
+  
+  .sidebar__item {
+    margin: 0;
+  }
+  
+  .sidebar__link-text {
+    flex: 1;
+    line-height: 1.4;
+  }
+  
+
+  
+  /* Mobile styles */
+  @media (max-width: 1024px) {
+    .sidebar {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      width: var(--sidebar-width);
+      max-width: 320px;
+      z-index: 200;
+      transform: translateX(-100%);
+      transition: transform var(--transition-medium);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .sidebar--open {
+      transform: translateX(0);
+    }
+    
+    .sidebar__overlay {
+      display: block;
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 150;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-medium);
+    }
+    
+    .sidebar--open .sidebar__overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  
+  /* Scrollbar styling */
+  .sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .sidebar::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 3px;
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-dark);
+  }
+</style>
