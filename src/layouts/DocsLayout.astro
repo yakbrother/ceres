@@ -32,8 +32,10 @@ const {
   <Sidebar />
   
   <main class="main-content">
-    <!-- Table of Contents for mobile -->
-    <TableOfContents headings={headings} />
+    <!-- Table of Contents for mobile/medium screens -->
+    <div class="toc-mobile-wrapper">
+      <TableOfContents headings={headings} />
+    </div>
     
     <article class="article">
       <header class="article__header">
@@ -89,6 +91,28 @@ const {
     min-width: 0; /* Prevent overflow */
     padding: var(--space-s);
     max-width: 100%;
+  }
+  
+  .toc-mobile-wrapper {
+    display: none;
+  }
+  
+  /* Show mobile ToC wrapper only on smaller screens */
+  @media (max-width: 1199px) {
+    .toc-mobile-wrapper {
+      display: block;
+    }
+    
+    .toc-mobile-wrapper :global(.toc) {
+      /* Add mobile class via JavaScript since Astro doesn't support conditional classes easily */
+    }
+  }
+  
+  /* Hide mobile ToC wrapper on desktop */
+  @media (min-width: 1200px) {
+    .toc-mobile-wrapper {
+      display: none;
+    }
   }
   
   .article {

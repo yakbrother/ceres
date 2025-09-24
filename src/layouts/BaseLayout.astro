@@ -155,7 +155,7 @@ const socialImageURL = new URL(image, Astro.url).href;
     flex-direction: column;
   }
   
-  /* Docs layout - with sidebar and TOC */
+  /* Docs layout - Large screens: three columns (sidebar + main + toc) */
   .app-layout--docs {
     display: grid;
     grid-template-areas: 
@@ -166,12 +166,24 @@ const socialImageURL = new URL(image, Astro.url).href;
     grid-template-rows: var(--header-height) 1fr auto;
   }
   
-  @media (max-width: 1024px) {
+  /* Medium screens: two columns (sidebar + main), TOC becomes dropdown in main */
+  @media (max-width: 1200px) and (min-width: 768px) {
     .app-layout--docs {
       grid-template-areas: 
         "header header"
-        "main main"
+        "sidebar main"
         "footer footer";
+      grid-template-columns: var(--sidebar-width) 1fr;
+    }
+  }
+  
+  /* Small screens: single column, sidebar becomes hamburger menu */
+  @media (max-width: 767px) {
+    .app-layout--docs {
+      grid-template-areas: 
+        "header"
+        "main"
+        "footer";
       grid-template-columns: 1fr;
     }
   }

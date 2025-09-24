@@ -14,7 +14,7 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
 ---
 
 {filteredHeadings.length > 0 && (
-  <aside class="toc">
+  <aside class="toc" id="toc-container">
     <div class="toc__content">
       <h3 class="toc__title">
         <i class="fas fa-list"></i>
@@ -29,7 +29,7 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
         aria-label="Toggle table of contents"
       >
         <i class="fas fa-list"></i>
-        <span>Contents</span>
+        <span>On this page...</span>
         <i class="fas fa-chevron-down toc__mobile-icon"></i>
       </button>
       
@@ -54,12 +54,43 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    const tocContainer = document.getElementById('toc-container');
     const tocLinks = document.querySelectorAll('.toc__link');
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     const mobileToggle = document.getElementById('toc-mobile-toggle');
     const tocNav = document.querySelector('.toc__nav');
     
     if (!tocLinks.length || !headings.length) return;
+    
+    // Add mobile class if ToC is in mobile wrapper
+    function updateTocClass() {
+      if (tocContainer) {
+        const isMobile = window.innerWidth <= 1199;
+        const isInMobileWrapper = tocContainer.closest('.toc-mobile-wrapper');
+        
+        if (isMobile && isInMobileWrapper) {
+          tocContainer.classList.add('toc--mobile');
+        } else {
+          tocContainer.classList.remove('toc--mobile');
+        }
+      }
+    }
+    
+    // Initial class setup
+    updateTocClass();
+    
+    // Update on resize
+    window.addEventListener('resize', updateTocClass);
+    
+    // Ensure dropdown starts closed
+    if (tocNav && mobileToggle) {
+      tocNav.classList.remove('toc__nav--open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      const icon = mobileToggle.querySelector('.toc__mobile-icon');
+      if (icon) {
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
     
     // Intersection Observer for active link highlighting
     const observerOptions = {
@@ -166,6 +197,13 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
     overflow-y: auto;
   }
   
+  /* Hide desktop sidebar TOC on screens smaller than 1200px */
+  @media (max-width: 1199px) {
+    .toc:not(.toc--mobile) {
+      display: none;
+    }
+  }
+  
   .toc__content {
     padding: var(--space-s);
   }
@@ -237,8 +275,8 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
   .toc__mobile-toggle {
     display: none;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    gap: var(--space-xs);
+    width: auto;
     padding: var(--space-xs) var(--space-s);
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border-light);
@@ -258,8 +296,15 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
     transition: transform var(--transition-medium);
   }
   
-  /* Mobile styles */
-  @media (max-width: 1024px) {
+  /* Hide mobile/dropdown ToC on desktop */
+  @media (min-width: 1200px) {
+    .toc--mobile {
+      display: none;
+    }
+  }
+  
+  /* Mobile/Medium screens styles - show ToC as dropdown in main content */
+  @media (max-width: 1199px) {
     .toc {
       position: relative;
       height: auto;
@@ -268,6 +313,7 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-md);
       margin-bottom: var(--space-l);
+      display: block;
     }
     
     .toc__content {
@@ -280,12 +326,17 @@ const filteredHeadings = headings.filter(heading => heading.depth <= 3);
     
     .toc__mobile-toggle {
       display: flex;
+      background-color: var(--color-bg-secondary);
+    }
+    
+    .toc__mobile-toggle:hover {
+      background-color: var(--color-bg-tertiary);
     }
     
     .toc__nav {
       display: none;
       margin-top: var(--space-s);
-      background-color: var(--color-bg-secondary);
+      background-color: var(--color-bg-primary);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-md);
       padding: var(--space-s);

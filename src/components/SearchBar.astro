@@ -50,13 +50,22 @@
   async function initializeSearch() {
     if (!pagefind) {
       try {
-        // Use a dynamic import that won't fail during build
+        // Only try to load Pagefind in production or when it's actually available
         if (typeof window !== 'undefined') {
-          // @ts-ignore - Pagefind is loaded at runtime
-          pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+          // Check if Pagefind is available first
+          const response = await fetch('/pagefind/pagefind.js', { method: 'HEAD' });
+          if (response.ok) {
+            // Use Function constructor to avoid Vite static analysis
+            const importPath = '/pagefind/pagefind.js';
+            // @ts-ignore - Pagefind is loaded at runtime
+            pagefind = await (new Function('return import(arguments[0])')(importPath));
+          } else {
+            console.info('Pagefind not available - this is normal in development mode');
+            return null;
+          }
         }
       } catch (error) {
-        console.warn('Pagefind not available:', error);
+        console.info('Pagefind not available - this is normal in development mode');
         return null;
       }
     }
@@ -81,8 +90,14 @@
     
     // Search function
     async function performSearch(query: string) {
-      if (!pf || !query.trim()) {
+      if (!query.trim()) {
         hideResults();
+        return;
+      }
+      
+      if (!pf) {
+        // Show fallback message in development
+        displayFallbackMessage();
         return;
       }
       
@@ -93,6 +108,28 @@
         console.error('Search error:', error);
         hideResults();
       }
+    }
+    
+    // Display fallback message for development
+    function displayFallbackMessage() {
+      if (searchResultsList) {
+        searchResultsList.innerHTML = `
+          <div class="search-results__empty">
+            <div class="search-results__dev-message">
+              <h3>Search not available in development</h3>
+              <p>Search functionality requires a build step. To test search:</p>
+              <ol>
+                <li>Run <code>npm run build</code></li>
+                <li>Then <code>npm run preview</code></li>
+              </ol>
+            </div>
+          </div>
+        `;
+      }
+      if (searchResultsCount) {
+        searchResultsCount.textContent = 'Development mode';
+      }
+      showResults();
     }
     
     // Display search results
@@ -347,6 +384,41 @@
     padding: var(--space-l);
     text-align: center;
     color: var(--color-text-muted);
+  }
+  
+  .search-results__dev-message {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .search-results__dev-message h3 {
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xs);
+    font-size: var(--step-0);
+  }
+  
+  .search-results__dev-message p {
+    margin-bottom: var(--space-xs);
+    color: var(--color-text-secondary);
+  }
+  
+  .search-results__dev-message ol {
+    text-align: left;
+    padding-left: var(--space-s);
+  }
+  
+  .search-results__dev-message li {
+    margin-bottom: var(--space-3xs);
+    color: var(--color-text-secondary);
+  }
+  
+  .search-results__dev-message code {
+    background-color: var(--color-bg-secondary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: var(--step--2);
+    color: var(--color-accent);
   }
   
   .search-result {

@@ -152,6 +152,13 @@ const currentPath = Astro.url.pathname;
     overflow-y: auto;
   }
   
+  /* Hide sidebar on small screens (will be shown as hamburger menu) */
+  @media (max-width: 767px) {
+    .sidebar {
+      display: none;
+    }
+  }
+  
   .sidebar__overlay {
     display: none;
   }
@@ -256,9 +263,17 @@ const currentPath = Astro.url.pathname;
   
 
   
-  /* Mobile styles */
-  @media (max-width: 1024px) {
+  /* Mobile styles - Medium screens (768px - 1024px): sidebar stays visible */
+  @media (max-width: 1024px) and (min-width: 768px) {
     .sidebar {
+      /* Sidebar remains in normal position on medium screens */
+    }
+  }
+  
+  /* Mobile styles - Small screens (< 768px): hamburger menu */
+  @media (max-width: 767px) {
+    .sidebar {
+      display: block; /* Override the display: none */
       position: fixed;
       top: var(--header-height);
       left: 0;
@@ -268,6 +283,7 @@ const currentPath = Astro.url.pathname;
       transform: translateX(-100%);
       transition: transform var(--transition-medium);
       box-shadow: var(--shadow-lg);
+      background-color: var(--color-dropdown-bg);
     }
     
     .sidebar--open {

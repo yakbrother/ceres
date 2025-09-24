@@ -167,8 +167,15 @@ import SearchBar from './SearchBar.astro';
     transform: translateY(0);
   }
   
-  /* Mobile styles */
-  @media (max-width: 1024px) {
+  /* Mobile styles - Medium screens: show search, hide hamburger */
+  @media (max-width: 1024px) and (min-width: 768px) {
+    .header__search {
+      display: none;
+    }
+  }
+  
+  /* Mobile styles - Small screens: show hamburger, hide search */
+  @media (max-width: 767px) {
     .header__mobile-toggle {
       display: flex;
       align-items: center;
