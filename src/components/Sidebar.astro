@@ -44,8 +44,8 @@ const currentPath = Astro.url.pathname;
             aria-expanded="true"
             data-category={category.toLowerCase().replace(/\s+/g, '-')}
           >
-            <i class="fas fa-chevron-down sidebar__category-icon"></i>
             <span class="sidebar__category-title">{category}</span>
+            <i class="fas fa-chevron-down sidebar__category-icon"></i>
           </button>
           
           <ul class="sidebar__category-list">
@@ -170,29 +170,39 @@ const currentPath = Astro.url.pathname;
   .sidebar__content {
     padding: var(--space-s);
   }
+
+  .sidebar__item {
+    list-style: none;
+    border-left: 3px solid var(--color-bg-tertiary);
+    padding: 2px;
+    margin-left: .5em;
+    margin-bottom: var(--space-xxs);
+  }
   
   .sidebar__link {
     display: flex;
     align-items: center;
-    padding: var(--space-xs) var(--space-s);
+    padding: .3em;
     color: var(--color-text-secondary);
     text-decoration: none;
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
     font-size: var(--step--1);
-    margin-bottom: var(--space-3xs);
+    margin-left: .3em
   }
   
   .sidebar__link:hover {
     background-color: var(--color-bg-tertiary);
     color: var(--color-text-primary);
     text-decoration: none;
+    border-left-color: var(--color-border-medium);
   }
   
   .sidebar__link--active {
     background-color: var(--color-bg-accent);
     color: var(--color-accent);
     font-weight: 600;
+    border-left-color: var(--color-accent);
   }
   
   .sidebar__link--home,
@@ -210,9 +220,9 @@ const currentPath = Astro.url.pathname;
   .sidebar__category-toggle {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    justify-content: space-between;
     width: 100%;
-    padding: var(--space-xs) var(--space-s);
+    padding: .3em;
     background: none;
     border: none;
     color: var(--color-text-primary);
@@ -233,6 +243,8 @@ const currentPath = Astro.url.pathname;
     text-align: center;
     transition: transform var(--transition-medium);
     flex-shrink: 0;
+    font-size: var(--step--2);
+    color: var(--color-text-muted);
   }
   
   .sidebar__category-title {
@@ -252,9 +264,7 @@ const currentPath = Astro.url.pathname;
     margin: 0;
   }
   
-  .sidebar__item {
-    margin: 0;
-  }
+
   
   .sidebar__link-text {
     flex: 1;

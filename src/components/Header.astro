@@ -39,35 +39,11 @@ import SearchBar from './SearchBar.astro';
       >
         <i class="fas fa-moon"></i>
       </button>
-      
-      <!-- Social links -->
-      {siteConfig.social.github && (
-        <a 
-          href={`https://github.com/${siteConfig.social.github}`}
-          class="header__action-btn"
-          aria-label="GitHub profile"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <i class="fab fa-github"></i>
-        </a>
-      )}
-      
-      {siteConfig.social.twitter && (
-        <a 
-          href={`https://twitter.com/${siteConfig.social.twitter}`}
-          class="header__action-btn"
-          aria-label="Twitter profile"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <i class="fab fa-twitter"></i>
-        </a>
-      )}
       </div>
     </div>
   </div>
 </header>
+
 
 <style>
   .header {
@@ -132,6 +108,7 @@ import SearchBar from './SearchBar.astro';
   
   .header__search {
     max-width: 400px;
+    flex: 1;
   }
   
   .header__actions {
@@ -167,23 +144,12 @@ import SearchBar from './SearchBar.astro';
     transform: translateY(0);
   }
   
-  /* Mobile styles - Medium screens: show search, hide hamburger */
-  @media (max-width: 1024px) and (min-width: 768px) {
-    .header__search {
-      display: none;
-    }
-  }
-  
-  /* Mobile styles - Small screens: show hamburger, hide search */
+  /* Mobile styles - Small screens: show hamburger, keep search visible */
   @media (max-width: 767px) {
     .header__mobile-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    
-    .header__search {
-      display: none;
     }
   }
   
@@ -195,6 +161,10 @@ import SearchBar from './SearchBar.astro';
     
     .header__title {
       font-size: var(--step-0);
+    }
+    
+    .header__search {
+      max-width: 200px;
     }
     
     .header__actions {
