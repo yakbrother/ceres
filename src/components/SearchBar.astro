@@ -32,10 +32,22 @@
   </form>
   
   <!-- Search results overlay -->
-  <div id="search-results" class="search-results" style="display: none;">
+  <div 
+    id="search-results" 
+    class="search-results" 
+    style="display: none;"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="search-results-title"
+    aria-describedby="search-results-instructions"
+  >
     <div class="search-results__content">
       <div class="search-results__header">
-        <span class="search-results__count"></span>
+        <h2 id="search-results-title" class="sr-only">Search Results</h2>
+        <div id="search-results-instructions" class="sr-only">
+          Use arrow keys to navigate results, Enter to select, or Escape to close.
+        </div>
+        <span class="search-results__count" aria-live="polite"></span>
         <button 
           id="search-close"
           class="search-results__close"
@@ -44,7 +56,12 @@
           <i class="fas fa-times" aria-hidden="true"></i>
         </button>
       </div>
-      <div id="search-results-list" class="search-results__list">
+      <div 
+        id="search-results-list" 
+        class="search-results__list"
+        role="listbox"
+        aria-label="Search results"
+      >
         <!-- Results will be populated by Pagefind -->
       </div>
     </div>
@@ -125,7 +142,30 @@
         displayResults(search);
       } catch (error) {
         console.error('Search error:', error);
-        hideResults();
+        
+        // Show accessible error message
+        if (searchResultsList) {
+          searchResultsList.innerHTML = `
+            <div class="search-results__error" role="alert" aria-live="assertive">
+              <h3>Search Error</h3>
+              <p>Unable to complete search. Please try again or check your connection.</p>
+              <button type="button" onclick="this.parentElement.parentElement.parentElement.style.display='none'">
+                Close
+              </button>
+            </div>
+          `;
+        }
+        
+        if (searchResultsCount) {
+          searchResultsCount.textContent = 'Search error';
+        }
+        
+        // Announce error
+        if (window.announceUrgent) {
+          window.announceUrgent('Search failed. Please try again.');
+        }
+        
+        showResults();
       }
     }
     
@@ -185,10 +225,16 @@
       }
       
       const resultsHTML = await Promise.all(
-        search.results.slice(0, 10).map(async (result: any) => {
+        search.results.slice(0, 10).map(async (result: any, index: number) => {
           const data = await result.data();
           return `
-            <a href="${data.url}" class="search-result">
+            <a href="${data.url}" 
+               class="search-result" 
+               role="option"
+               aria-posinset="${index + 1}"
+               aria-setsize="${Math.min(search.results.length, 10)}"
+               tabindex="-1"
+            >
               <div class="search-result__title">${data.meta.title || 'Untitled'}</div>
               <div class="search-result__excerpt">${data.excerpt}</div>
               <div class="search-result__url">${data.url}</div>
@@ -272,13 +318,35 @@
       searchClose.addEventListener('click', hideResults);
     }
     
-    // Enhanced keyboard navigation
+    // Enhanced keyboard navigation with ARIA support
     document.addEventListener('keydown', (e) => {
       if (!searchResults || searchResults.style.display === 'none') return;
       
-      const results = Array.from(searchResults.querySelectorAll('.search-result, .search-results__close'));
+      const results = Array.from(searchResults.querySelectorAll('.search-result'));
+      const closeButton = searchResults.querySelector('.search-results__close');
+      const allFocusable = [...results, closeButton].filter(Boolean) as HTMLElement[];
       const activeElement = document.activeElement;
-      const currentIndex = results.indexOf(activeElement as HTMLElement);
+      const currentIndex = allFocusable.indexOf(activeElement as HTMLElement);
+      
+      // Update aria-activedescendant for screen readers
+      const updateActiveDescendant = (index: number) => {
+        // Clear all aria-selected
+        results.forEach(result => result.removeAttribute('aria-selected'));
+        
+        if (index >= 0 && index < results.length) {
+          const activeResult = results[index];
+          activeResult.setAttribute('aria-selected', 'true');
+          
+          // Update listbox aria-activedescendant
+          const listbox = searchResults.querySelector('[role="listbox"]');
+          if (listbox) {
+            listbox.setAttribute('aria-activedescendant', activeResult.id || `search-result-${index}`);
+            if (!activeResult.id) {
+              activeResult.id = `search-result-${index}`;
+            }
+          }
+        }
+      };
       
       switch (e.key) {
         case 'Escape':
@@ -286,22 +354,34 @@
           break;
         case 'ArrowDown':
           e.preventDefault();
-          const nextIndex = currentIndex < results.length - 1 ? currentIndex + 1 : 0;
-          (results[nextIndex] as HTMLElement)?.focus();
+          const nextIndex = currentIndex < allFocusable.length - 1 ? currentIndex + 1 : 0;
+          allFocusable[nextIndex]?.focus();
+          if (nextIndex < results.length) {
+            updateActiveDescendant(nextIndex);
+          }
           break;
         case 'ArrowUp':
           e.preventDefault();
-          const prevIndex = currentIndex > 0 ? currentIndex - 1 : results.length - 1;
-          (results[prevIndex] as HTMLElement)?.focus();
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : allFocusable.length - 1;
+          allFocusable[prevIndex]?.focus();
+          if (prevIndex < results.length) {
+            updateActiveDescendant(prevIndex);
+          }
+          break;
+        case 'Enter':
+          if (currentIndex >= 0 && currentIndex < results.length) {
+            e.preventDefault();
+            results[currentIndex].click();
+          }
           break;
         case 'Tab':
           // Allow normal tab behavior but keep within modal
           if (e.shiftKey && currentIndex === 0) {
             e.preventDefault();
-            (results[results.length - 1] as HTMLElement)?.focus();
-          } else if (!e.shiftKey && currentIndex === results.length - 1) {
+            allFocusable[allFocusable.length - 1]?.focus();
+          } else if (!e.shiftTab && currentIndex === allFocusable.length - 1) {
             e.preventDefault();
-            (results[0] as HTMLElement)?.focus();
+            allFocusable[0]?.focus();
           }
           break;
       }
