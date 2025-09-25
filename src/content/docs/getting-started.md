@@ -40,6 +40,19 @@ src/
 
 ## Next Steps
 
-- [Configuration Guide](/docs/configuration) - Learn how to customize the template
-- [Content Management](/docs/content-management) - Understand how to organize your content
-- [Deployment](/docs/deployment) - Deploy your site to production
+Explore these comprehensive guides to build and customize your digital garden:
+
+### Core Concepts
+- [Digital Garden Philosophy](/docs/digital-gardens) - Understand digital gardens vs traditional blogs
+- [Building a Second Brain](/docs/second-brain) - Create your knowledge management system
+
+### Design & Experience  
+- [Web Accessibility](/docs/accessibility) - Build inclusively for all users
+- [Theme Customization](/docs/theme-customization) - Colors, fonts, and layouts
+- [Typography & Fonts](/docs/typography) - Optimize readability and performance
+
+### Technical Implementation
+- [Hosting & Deployment](/docs/hosting-deployment) - Get your garden online
+- [Performance Optimization](/docs/performance-optimization) - Speed and Core Web Vitals
+- [Content Management](/docs/content-management) - Organize your knowledge
+- [Configuration Guide](/docs/configuration) - Customize the template
