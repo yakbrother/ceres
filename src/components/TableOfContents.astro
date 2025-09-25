@@ -30,14 +30,15 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
         id="toc-mobile-toggle"
         class="toc__mobile-toggle"
         aria-expanded="false"
-        aria-label="Toggle table of contents"
+        aria-label="Show table of contents"
+        aria-controls="toc-nav"
       >
         <i class="fas fa-list" aria-hidden="true"></i>
         <span>On this page...</span>
         <i class="fas fa-chevron-down toc__mobile-icon" aria-hidden="true"></i>
       </button>
       
-      <nav class="toc__nav" aria-label="Page table of contents" aria-describedby="toc-help">
+      <nav id="toc-nav" class="toc__nav" aria-label="Page table of contents" aria-describedby="toc-help">
         <ul class="toc__list">
           {filteredHeadings.map(heading => (
             <li class={`toc__item toc__item--level-${heading.depth}`}>

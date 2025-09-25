@@ -27,7 +27,7 @@ const socialImageURL = new URL(image, Astro.url).href;
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     
@@ -130,12 +130,14 @@ const socialImageURL = new URL(image, Astro.url).href;
               sidebar.classList.remove('sidebar--open');
               document.body.classList.remove('sidebar-open');
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
             } else {
               // Opening sidebar
               sidebar.classList.add('sidebar--open');
               document.body.classList.add('sidebar-open');
               mobileMenuToggle.setAttribute('aria-expanded', 'true');
+              mobileMenuToggle.setAttribute('aria-label', 'Close navigation menu');
               
               // Focus first link in sidebar for keyboard users
               const firstLink = sidebar.querySelector('.sidebar__link');
@@ -152,6 +154,7 @@ const socialImageURL = new URL(image, Astro.url).href;
             document.body.classList.remove('sidebar-open');
             if (mobileMenuToggle) {
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
             }
           });
@@ -164,7 +167,34 @@ const socialImageURL = new URL(image, Astro.url).href;
             document.body.classList.remove('sidebar-open');
             if (mobileMenuToggle) {
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
+            }
+          }
+        });
+        
+        // Add touch support for swipe to close
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+          if (sidebar?.classList.contains('sidebar--open')) {
+            touchStartX = e.changedTouches[0].screenX;
+          }
+        });
+        
+        document.addEventListener('touchend', (e) => {
+          if (sidebar?.classList.contains('sidebar--open')) {
+            touchEndX = e.changedTouches[0].screenX;
+            // Swipe left to close (threshold of 50px)
+            if (touchStartX - touchEndX > 50) {
+              sidebar.classList.remove('sidebar--open');
+              document.body.classList.remove('sidebar-open');
+              if (mobileMenuToggle) {
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
+                mobileMenuToggle.focus();
+              }
             }
           }
         });

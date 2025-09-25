@@ -228,6 +228,27 @@ input[type="submit"],
   justify-content: center;
 }
 
+/* Improved touch targets for mobile */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  [role="button"] {
+    min-height: 48px;
+    min-width: 48px;
+    /* Add padding for easier targeting */
+    padding: var(--space-xs);
+  }
+  
+  /* Ensure text links have adequate spacing */
+  a {
+    padding: var(--space-2xs) var(--space-xs);
+    margin: var(--space-3xs);
+    border-radius: var(--radius-sm);
+  }
+}
+
 /* Lists */
 ul,
 ol {
