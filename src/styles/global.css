@@ -293,11 +293,22 @@ th {
   background-color: var(--color-bg-secondary);
 }
 
-/* Images */
+/* Images 
+ * Always ensure images have appropriate alt text:
+ * - Content images: descriptive alt text
+ * - Decorative images: alt="" or aria-hidden="true"
+ * - Complex images: consider using aria-describedby
+ */
 img {
   max-width: 100%;
   height: auto;
   border-radius: var(--radius-md);
+}
+
+/* Decorative images should be hidden from screen readers */
+img[aria-hidden="true"],
+img[alt=""] {
+  /* These images are considered decorative */
 }
 
 /* Utility Classes */

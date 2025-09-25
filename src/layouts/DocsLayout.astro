@@ -41,7 +41,7 @@ const {
       <header class="article__header">
         {category && (
           <div class="article__category">
-            <i class="fas fa-folder"></i>
+            <i class="fas fa-folder" aria-hidden="true"></i>
             <span>{category}</span>
           </div>
         )}
@@ -51,7 +51,7 @@ const {
         <div class="article__meta">
           {lastUpdated && (
             <div class="article__meta-item">
-              <i class="fas fa-calendar-alt"></i>
+              <i class="fas fa-calendar-alt" aria-hidden="true"></i>
               <span>Last updated: {lastUpdated.toLocaleDateString('en-US', { 
                 year: 'numeric', 
                 month: 'long', 

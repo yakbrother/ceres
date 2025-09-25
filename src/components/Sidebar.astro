@@ -45,7 +45,7 @@ const currentPath = Astro.url.pathname;
             data-category={category.toLowerCase().replace(/\s+/g, '-')}
           >
             <span class="sidebar__category-title">{category}</span>
-            <i class="fas fa-chevron-down sidebar__category-icon"></i>
+            <i class="fas fa-chevron-down sidebar__category-icon" aria-hidden="true"></i>
           </button>
           
           <ul class="sidebar__category-list">

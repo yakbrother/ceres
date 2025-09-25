@@ -10,7 +10,7 @@ import { siteConfig } from '../../astro.config.mjs';
   <Header />
   <Sidebar />
   
-  <main class="main-content">
+  <main id="main-content" class="main-content" role="main">
     <div class="about-page">
       <div class="about-page__container">
         <article class="about-content">
@@ -40,7 +40,7 @@ import { siteConfig } from '../../astro.config.mjs';
             <h2>Key Features</h2>
             <div class="features-list">
               <div class="feature-item">
-                <i class="fas fa-rocket feature-icon"></i>
+                <i class="fas fa-rocket feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Performance First</h3>
                   <p>Built with Astro for lightning-fast static site generation and optimal Core Web Vitals scores.</p>
@@ -48,7 +48,7 @@ import { siteConfig } from '../../astro.config.mjs';
               </div>
               
               <div class="feature-item">
-                <i class="fas fa-search feature-icon"></i>
+                <i class="fas fa-search feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Powerful Search</h3>
                   <p>Integrated Pagefind search with offline support and zero runtime dependencies.</p>
@@ -56,7 +56,7 @@ import { siteConfig } from '../../astro.config.mjs';
               </div>
               
               <div class="feature-item">
-                <i class="fas fa-universal-access feature-icon"></i>
+                <i class="fas fa-universal-access feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Accessibility</h3>
                   <p>WCAG 2.1 AA compliant with keyboard navigation and screen reader support.</p>
@@ -64,7 +64,7 @@ import { siteConfig } from '../../astro.config.mjs';
               </div>
               
               <div class="feature-item">
-                <i class="fas fa-mobile-alt feature-icon"></i>
+                <i class="fas fa-mobile-alt feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Mobile Responsive</h3>
                   <p>Beautiful, touch-friendly interface that works perfectly on all device sizes.</p>
@@ -72,7 +72,7 @@ import { siteConfig } from '../../astro.config.mjs';
               </div>
               
               <div class="feature-item">
-                <i class="fas fa-palette feature-icon"></i>
+                <i class="fas fa-palette feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Modern Design</h3>
                   <p>Clean, professional design with fluid typography and dark/light theme support.</p>
@@ -80,7 +80,7 @@ import { siteConfig } from '../../astro.config.mjs';
               </div>
               
               <div class="feature-item">
-                <i class="fas fa-cog feature-icon"></i>
+                <i class="fas fa-cog feature-icon" aria-hidden="true"></i>
                 <div>
                   <h3>Highly Customizable</h3>
                   <p>Easy to customize with modern CSS architecture and component-based structure.</p>
@@ -123,11 +123,11 @@ import { siteConfig } from '../../astro.config.mjs';
             </p>
             <div class="cta-buttons">
               <a href="/docs/getting-started/introduction" class="btn btn--primary">
-                <i class="fas fa-rocket"></i>
+                <i class="fas fa-rocket" aria-hidden="true"></i>
                 Get Started
               </a>
               <a href="/docs/guides/writing-content" class="btn btn--secondary">
-                <i class="fas fa-book"></i>
+                <i class="fas fa-book" aria-hidden="true"></i>
                 Writing Guide
               </a>
             </div>
@@ -140,13 +140,13 @@ import { siteConfig } from '../../astro.config.mjs';
             </p>
             <div class="contact-info">
               <div class="contact-item">
-                <i class="fas fa-envelope"></i>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
                 <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
               </div>
               
               {siteConfig.social.github && (
                 <div class="contact-item">
-                  <i class="fab fa-github"></i>
+                  <i class="fab fa-github" aria-hidden="true"></i>
                   <a href={`https://github.com/${siteConfig.social.github}`} target="_blank" rel="noopener noreferrer">
                     GitHub
                   </a>
@@ -155,7 +155,7 @@ import { siteConfig } from '../../astro.config.mjs';
               
               {siteConfig.social.twitter && (
                 <div class="contact-item">
-                  <i class="fab fa-twitter"></i>
+                  <i class="fab fa-twitter" aria-hidden="true"></i>
                   <a href={`https://twitter.com/${siteConfig.social.twitter}`} target="_blank" rel="noopener noreferrer">
                     Twitter
                   </a>
