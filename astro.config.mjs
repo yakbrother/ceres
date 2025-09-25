@@ -13,6 +13,7 @@ export const siteConfig = {
     twitter: "@username",
     github: "username",
     linkedin: "username",
+    mastodon: "@username@mastodon.social",
   },
 };
 

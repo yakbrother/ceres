@@ -41,6 +41,17 @@ import { siteConfig } from '../../astro.config.mjs';
               <i class="fab fa-twitter" aria-hidden="true"></i>
             </a>
           )}
+          {siteConfig.social.mastodon && (
+            <a 
+              href={`https://mastodon.social/${siteConfig.social.mastodon.replace('@', '').replace('@mastodon.social', '')}`}
+              class="footer__social-link"
+              aria-label="Visit Mastodon profile (opens in new tab)"
+              target="_blank"
+              rel="noopener noreferrer me"
+            >
+              <i class="fab fa-mastodon" aria-hidden="true"></i>
+            </a>
+          )}
         </div>
       </div>
       
@@ -192,7 +203,7 @@ import { siteConfig } from '../../astro.config.mjs';
   .footer__bottom {
     padding-top: var(--space-l);
     border-top: 1px solid var(--color-border-light);
-    text-align: center;
+    text-align: left;
   }
   
   .footer__copyright {
@@ -215,11 +226,15 @@ import { siteConfig } from '../../astro.config.mjs';
   
   @media (max-width: 640px) {
     .footer__social {
-      justify-content: center;
+      justify-content: flex-start;
     }
     
     .footer__nav {
-      text-align: center;
+      text-align: left;
+    }
+    
+    .footer__bottom {
+      text-align: left;
     }
   }
 </style>

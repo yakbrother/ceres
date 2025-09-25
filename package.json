@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.1",
     "@types/node": "^22.10.2",
     "axe-core": "^4.10.3",
     "jsdom": "^27.0.0"
