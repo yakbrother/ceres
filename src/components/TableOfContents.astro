@@ -176,6 +176,12 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
         if (icon) {
           icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
         }
+        
+        // Announce state change
+        if (window.announceStatus) {
+          const stateText = isOpen ? 'collapsed' : 'expanded';
+          window.announceStatus(`Table of contents ${stateText}`);
+        }
       });
     }
     

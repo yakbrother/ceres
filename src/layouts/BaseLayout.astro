@@ -89,8 +89,54 @@ const socialImageURL = new URL(image, Astro.url).href;
     <a href="#sidebar" class="skip-link">Skip to navigation</a>
     
     <div class={`app-layout app-layout--${layout}`}>
+      <!-- Global ARIA live regions for announcements -->
+      <div id="live-region-polite" aria-live="polite" aria-atomic="false" class="sr-only"></div>
+      <div id="live-region-assertive" aria-live="assertive" aria-atomic="false" class="sr-only"></div>
+      <div id="live-region-status" role="status" aria-live="polite" class="sr-only"></div>
+      
       <slot />
     </div>
+    
+    <!-- Live region announcement utility -->
+    <script>
+      // Global utility for accessible announcements
+      window.announceToScreenReader = function(message, priority = 'polite') {
+        const liveRegions = {
+          polite: document.getElementById('live-region-polite'),
+          assertive: document.getElementById('live-region-assertive'),
+          status: document.getElementById('live-region-status')
+        };
+        
+        const region = liveRegions[priority] || liveRegions.polite;
+        
+        if (region) {
+          // Clear previous message
+          region.textContent = '';
+          
+          // Set new message after a brief delay to ensure screen readers notice
+          setTimeout(() => {
+            region.textContent = message;
+          }, 100);
+          
+          // Clear message after 5 seconds to prevent clutter
+          setTimeout(() => {
+            if (region.textContent === message) {
+              region.textContent = '';
+            }
+          }, 5000);
+        }
+      };
+      
+      // Utility for status updates (like loading, success, error)
+      window.announceStatus = function(message) {
+        window.announceToScreenReader(message, 'status');
+      };
+      
+      // Utility for urgent notifications
+      window.announceUrgent = function(message) {
+        window.announceToScreenReader(message, 'assertive');
+      };
+    </script>
     
     <!-- Theme toggle script -->
     <script>
@@ -108,6 +154,12 @@ const socialImageURL = new URL(image, Astro.url).href;
             const icon = themeToggle.querySelector('i');
             if (icon) {
               icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            
+            // Announce theme change to screen readers
+            const themeLabel = newTheme === 'dark' ? 'dark mode' : 'light mode';
+            if (window.announceStatus) {
+              window.announceStatus(`Switched to ${themeLabel}`);
             }
           });
         }
@@ -132,6 +184,11 @@ const socialImageURL = new URL(image, Astro.url).href;
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
               mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
+              
+              // Announce menu closure
+              if (window.announceStatus) {
+                window.announceStatus('Navigation menu closed');
+              }
             } else {
               // Opening sidebar
               sidebar.classList.add('sidebar--open');
@@ -143,6 +200,11 @@ const socialImageURL = new URL(image, Astro.url).href;
               const firstLink = sidebar.querySelector('.sidebar__link');
               if (firstLink) {
                 firstLink.focus();
+              }
+              
+              // Announce menu state change
+              if (window.announceStatus) {
+                window.announceStatus('Navigation menu opened');
               }
             }
           });
@@ -156,6 +218,11 @@ const socialImageURL = new URL(image, Astro.url).href;
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
               mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
+              
+              // Announce menu closure
+              if (window.announceStatus) {
+                window.announceStatus('Navigation menu closed');
+              }
             }
           });
         }
@@ -169,6 +236,11 @@ const socialImageURL = new URL(image, Astro.url).href;
               mobileMenuToggle.setAttribute('aria-expanded', 'false');
               mobileMenuToggle.setAttribute('aria-label', 'Open navigation menu');
               mobileMenuToggle.focus();
+              
+              // Announce menu closure
+              if (window.announceStatus) {
+                window.announceStatus('Navigation menu closed');
+              }
             }
           }
         });

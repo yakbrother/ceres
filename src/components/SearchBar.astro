@@ -109,6 +109,11 @@
         searchResultsCount.setAttribute('aria-live', 'polite');
       }
       
+      // Announce search started
+      if (window.announceStatus) {
+        window.announceStatus('Search started');
+      }
+      
       if (!pf) {
         // Show fallback message in development
         displayFallbackMessage();
@@ -159,13 +164,24 @@
         if (searchResultsCount) {
           searchResultsCount.textContent = 'No results';
         }
+        
+        // Announce no results
+        if (window.announceStatus) {
+          window.announceStatus(`No search results found for "${currentQuery}".`);
+        }
         showResults();
         return;
       }
       
       if (searchResultsCount) {
-        searchResultsCount.textContent = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+        const resultText = `${search.results.length} result${search.results.length === 1 ? '' : 's'}`;
+        searchResultsCount.textContent = resultText;
         searchResultsCount.setAttribute('aria-live', 'polite');
+        
+        // Announce search completion
+        if (window.announceStatus) {
+          window.announceStatus(`Search completed. ${resultText} found.`);
+        }
       }
       
       const resultsHTML = await Promise.all(

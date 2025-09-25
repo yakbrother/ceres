@@ -112,6 +112,13 @@ const currentPath = Astro.url.pathname;
         if (categoryId) {
           localStorage.setItem(`sidebar-category-${categoryId}`, String(!isExpanded));
         }
+        
+        // Announce state change
+        if (window.announceStatus) {
+          const categoryName = category.querySelector('.sidebar__category-title')?.textContent || 'Category';
+          const stateText = isExpanded ? 'collapsed' : 'expanded';
+          window.announceStatus(`${categoryName} section ${stateText}`);
+        }
       });
     });
     
