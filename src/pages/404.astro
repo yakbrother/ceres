@@ -38,18 +38,31 @@ import Sidebar from '../components/Sidebar.astro';
         </div>
         
         <div class="error-search">
-          <p class="error-search-text">Or try searching for what you need:</p>
-          <div class="error-search-bar">
-            <input 
-              type="search" 
-              placeholder="Search documentation..."
-              class="error-search-input"
-              id="error-search-input"
-            />
-            <button class="error-search-btn" id="error-search-btn">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </button>
-          </div>
+          <form role="search" class="error-search-form">
+            <label for="error-search-input" class="error-search-label">Or try searching for what you need:</label>
+            <div class="error-search-bar">
+              <input 
+                type="search" 
+                placeholder="Search documentation..."
+                class="error-search-input"
+                id="error-search-input"
+                name="query"
+                aria-label="Search documentation"
+                aria-describedby="error-search-help"
+              />
+              <button 
+                type="submit"
+                class="error-search-btn" 
+                id="error-search-btn"
+                aria-label="Search"
+              >
+                <i class="fas fa-search" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div id="error-search-help" class="sr-only">
+              Press Enter or click the search button to search documentation
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -61,22 +74,42 @@ import Sidebar from '../components/Sidebar.astro';
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    const searchForm = document.querySelector('.error-search-form');
     const searchInput = document.getElementById('error-search-input');
     const searchBtn = document.getElementById('error-search-btn');
     
-    function performSearch() {
+    function performSearch(event?: Event) {
+      if (event) {
+        event.preventDefault();
+      }
+      
       const input = searchInput as HTMLInputElement;
       const query = input?.value.trim();
-      if (query) {
-        // Redirect to homepage with search query
-        window.location.href = `/?search=${encodeURIComponent(query)}`;
+      
+      if (!query) {
+        // Provide accessible feedback for empty searches
+        input?.focus();
+        return;
       }
+      
+      // Redirect to homepage with search query
+      window.location.href = `/?search=${encodeURIComponent(query)}`;
     }
     
-    searchBtn?.addEventListener('click', performSearch);
+    // Handle form submission
+    searchForm?.addEventListener('submit', performSearch);
+    
+    // Fallback for button click (form submission should handle this)
+    searchBtn?.addEventListener('click', (e) => {
+      if (!searchForm) {
+        performSearch(e);
+      }
+    });
+    
+    // Additional keyboard support for older browsers
     searchInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        performSearch();
+      if (e.key === 'Enter' && !searchForm) {
+        performSearch(e);
       }
     });
   });
@@ -191,10 +224,16 @@ import Sidebar from '../components/Sidebar.astro';
     border-top: 1px solid var(--color-border-light);
   }
   
-  .error-search-text {
+  .error-search-form {
+    width: 100%;
+  }
+  
+  .error-search-label {
     color: var(--color-text-muted);
     font-size: var(--step--1);
     margin-bottom: var(--space-s);
+    display: block;
+    text-align: center;
   }
   
   .error-search-bar {
