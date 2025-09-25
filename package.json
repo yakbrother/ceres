@@ -10,7 +10,10 @@
     "build:search": "npx pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "test:a11y": "node tests/accessibility.test.js",
+    "test:a11y:build": "npm run build && npm run test:a11y",
+    "a11y": "npm run test:a11y:build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -21,6 +24,9 @@
     "typescript": "^5.7.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2"
+    "@axe-core/playwright": "^4.10.2",
+    "@types/node": "^22.10.2",
+    "axe-core": "^4.10.3",
+    "jsdom": "^27.0.0"
   }
 }
