@@ -191,6 +191,69 @@ a:hover {
   text-decoration: underline;
 }
 
+/* External link indicators */
+a[href^="http"]::after,
+a[href^="https://"]:not([href*="your-domain.com"])::after {
+  content: " ↗";
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 0.2em;
+}
+
+/* Hide external link indicators for icon-only links */
+a[aria-label*="(opens in new tab)"]::after,
+a[aria-label*="GitHub"]::after,
+a[aria-label*="Twitter"]::after {
+  display: none;
+}
+
+/* Skip links should not show external indicator */
+.skip-link::after {
+  display: none;
+}
+
+/* File type indicators */
+a[href$=".pdf"]::after {
+  content: " (PDF)";
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 0.2em;
+}
+
+a[href$=".doc"]::after,
+a[href$=".docx"]::after {
+  content: " (Word document)";
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 0.2em;
+}
+
+a[href$=".xls"]::after,
+a[href$=".xlsx"]::after {
+  content: " (Excel spreadsheet)";
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 0.2em;
+}
+
+a[href$=".ppt"]::after,
+a[href$=".pptx"]::after {
+  content: " (PowerPoint presentation)";
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 0.2em;
+}
+
 /* Focus styles for accessibility */
 :focus-visible {
   outline: 2px solid var(--color-accent);

@@ -272,6 +272,59 @@ const socialImageURL = new URL(image, Astro.url).href;
         });
       });
     </script>
+    
+    <!-- External link enhancement script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Enhance external links with accessibility attributes
+        const links = document.querySelectorAll('a[href]');
+        const currentDomain = window.location.hostname;
+        
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          
+          // Skip if not an external link
+          if (!href || href.startsWith('#') || href.startsWith('/') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+            return;
+          }
+          
+          // Check if it's an external domain
+          try {
+            const url = new URL(href, window.location);
+            const isExternal = url.hostname !== currentDomain;
+            
+            if (isExternal) {
+              // Add target="_blank" if not already present
+              if (!link.hasAttribute('target')) {
+                link.setAttribute('target', '_blank');
+              }
+              
+              // Add rel="noopener noreferrer" if not already present
+              if (!link.hasAttribute('rel')) {
+                link.setAttribute('rel', 'noopener noreferrer');
+              } else {
+                const rel = link.getAttribute('rel');
+                if (!rel.includes('noopener')) {
+                  link.setAttribute('rel', rel + ' noopener');
+                }
+                if (!rel.includes('noreferrer')) {
+                  link.setAttribute('rel', link.getAttribute('rel') + ' noreferrer');
+                }
+              }
+              
+              // Enhance aria-label if not already descriptive
+              const existingLabel = link.getAttribute('aria-label');
+              if (!existingLabel || !existingLabel.includes('new tab')) {
+                const linkText = link.textContent?.trim() || 'external link';
+                link.setAttribute('aria-label', `${linkText} (opens in new tab)`);
+              }
+            }
+          } catch (e) {
+            // Invalid URL, skip
+          }
+        });
+      });
+    </script>
   </body>
 </html>
 
