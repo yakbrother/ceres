@@ -82,6 +82,10 @@
   --transition-fast: 150ms ease-in-out;
   --transition-medium: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
+  
+  /* Reduced motion variables */
+  --animation-duration: var(--transition-medium);
+  --transform-duration: var(--transition-fast);
 
   /* Border Radius */
   --radius-sm: 0.25rem;
@@ -553,6 +557,44 @@ img[alt=""] {
     /* Small screen adjustments */
     --sidebar-width: 100%;
     --toc-width: 100%;
+  }
+}
+
+/* Reduced Motion Support 
+ * Respects user preference for reduced motion
+ * Disables animations and transforms for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    /* Disable all transitions and animations */
+    --transition-fast: 0ms;
+    --transition-medium: 0ms;
+    --transition-slow: 0ms;
+    --animation-duration: 0ms;
+    --transform-duration: 0ms;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Keep essential focus indicators but remove transforms */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    transform: none !important;
+  }
+  
+  /* Disable hover transforms but keep color changes */
+  a:hover,
+  button:hover {
+    transform: none !important;
   }
 }
 

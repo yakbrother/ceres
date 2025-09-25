@@ -136,6 +136,25 @@ const socialImageURL = new URL(image, Astro.url).href;
       window.announceUrgent = function(message) {
         window.announceToScreenReader(message, 'assertive');
       };
+      
+      // Utility for checking reduced motion preference
+      window.prefersReducedMotion = function() {
+        return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      };
+      
+      // Utility for respectful animations
+      window.respectfulAnimate = function(element, keyframes, options = {}) {
+        if (window.prefersReducedMotion()) {
+          // Skip animation, just apply final state
+          return Promise.resolve();
+        }
+        
+        // Perform animation normally
+        if (element.animate) {
+          return element.animate(keyframes, options);
+        }
+        return Promise.resolve();
+      };
     </script>
     
     <!-- Theme toggle script -->
