@@ -208,10 +208,11 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 <style>
   .toc {
     grid-area: toc;
-    height: calc(100vh - var(--header-height));
+    max-height: calc(100vh - var(--header-height) - 100px);
     position: sticky;
     top: var(--header-height);
     overflow-y: auto;
+    align-self: start;
   }
   
   /* Hide desktop sidebar TOC on screens smaller than 1200px */
