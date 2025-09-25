@@ -23,10 +23,10 @@ sortedCategories.forEach(category => {
 const currentPath = Astro.url.pathname;
 ---
 
-<aside id="sidebar" class="sidebar">
+<aside id="sidebar" class="sidebar" role="complementary" aria-label="Site navigation">
   <div id="sidebar-overlay" class="sidebar__overlay"></div>
   
-  <nav class="sidebar__nav" aria-label="Main navigation">
+  <nav class="sidebar__nav" role="navigation" aria-label="Documentation navigation">
     <div class="sidebar__content">
       <!-- Home link -->
       <a 

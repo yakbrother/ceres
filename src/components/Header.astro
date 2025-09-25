@@ -3,7 +3,7 @@ import { siteConfig } from '../../astro.config.mjs';
 import SearchBar from './SearchBar.astro';
 ---
 
-<header class="header">
+<header class="header" role="banner">
   <div class="header__container">
     <!-- Mobile menu toggle -->
     <button 
@@ -23,7 +23,7 @@ import SearchBar from './SearchBar.astro';
     </div>
     
     <!-- Navigation (search + actions) -->
-    <div class="header__nav">
+    <nav class="header__nav" role="navigation" aria-label="Main navigation">
       <!-- Search bar -->
       <div class="header__search">
         <SearchBar />
@@ -40,7 +40,7 @@ import SearchBar from './SearchBar.astro';
         <i class="fas fa-moon"></i>
       </button>
       </div>
-    </div>
+    </nav>
   </div>
 </header>
 
