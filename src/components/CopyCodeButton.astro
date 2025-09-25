@@ -1,0 +1,204 @@
+---
+// This component provides the CSS and script for copy code functionality
+// The actual buttons are added via JavaScript to existing code blocks
+---
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Find all code blocks
+    const codeBlocks = document.querySelectorAll('pre');
+    
+    codeBlocks.forEach((pre) => {
+      // Skip if already has copy button
+      if (pre.querySelector('.copy-code-button')) return;
+      
+      // Create copy button
+      const button = document.createElement('button');
+      button.className = 'copy-code-button';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.setAttribute('title', 'Copy code');
+      button.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i>';
+      
+      // Position the pre element relatively so button can be absolutely positioned
+      pre.style.position = 'relative';
+      
+      // Add button to pre element
+      pre.appendChild(button);
+      
+      // Add click handler
+      button.addEventListener('click', async () => {
+        const codeElement = pre.querySelector('code');
+        const code = codeElement ? codeElement.textContent : pre.textContent;
+        
+        try {
+          await navigator.clipboard.writeText(code);
+          
+          // Update button to show success
+          const icon = button.querySelector('i');
+          const originalClass = icon.className;
+          
+          icon.className = 'fas fa-check';
+          button.setAttribute('aria-label', 'Code copied to clipboard');
+          button.setAttribute('title', 'Copied!');
+          button.classList.add('copy-code-button--success');
+          
+          // Announce success to screen readers
+          if (window.announceStatus) {
+            window.announceStatus('Code copied to clipboard');
+          }
+          
+          // Reset after 2 seconds
+          setTimeout(() => {
+            icon.className = originalClass;
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+            button.setAttribute('title', 'Copy code');
+            button.classList.remove('copy-code-button--success');
+          }, 2000);
+          
+        } catch (err) {
+          console.warn('Failed to copy code:', err);
+          
+          // Show error state briefly
+          const icon = button.querySelector('i');
+          const originalClass = icon.className;
+          
+          icon.className = 'fas fa-times';
+          button.setAttribute('title', 'Copy failed');
+          button.classList.add('copy-code-button--error');
+          
+          // Announce error to screen readers
+          if (window.announceStatus) {
+            window.announceStatus('Failed to copy code');
+          }
+          
+          // Reset after 2 seconds
+          setTimeout(() => {
+            icon.className = originalClass;
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+            button.setAttribute('title', 'Copy code');
+            button.classList.remove('copy-code-button--error');
+          }, 2000);
+        }
+      });
+    });
+  });
+</script>
+
+<style is:global>
+  /* Copy code button styles */
+  .copy-code-button {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-size: var(--step--1);
+    padding: var(--space-2xs);
+    transition: all var(--transition-fast);
+    z-index: 10;
+    min-width: 2rem;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  
+  .copy-code-button:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-medium);
+  }
+  
+  .copy-code-button:active {
+    transform: translateY(-1px);
+  }
+  
+  .copy-code-button--success {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+  
+  .copy-code-button--success:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+  
+  .copy-code-button--error {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+  }
+  
+  .copy-code-button--error:hover {
+    background: #c82333;
+    border-color: #c82333;
+  }
+  
+  /* Show button on hover or focus */
+  pre:hover .copy-code-button,
+  pre:focus-within .copy-code-button,
+  .copy-code-button:focus {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Always show on touch devices */
+  @media (hover: none) {
+    .copy-code-button {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Focus styles for accessibility */
+  .copy-code-button:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .copy-code-button {
+      top: var(--space-2xs);
+      right: var(--space-2xs);
+      font-size: var(--step--2);
+      padding: var(--space-3xs);
+      min-width: 1.75rem;
+      min-height: 1.75rem;
+    }
+  }
+  
+  /* Ensure code blocks have enough padding to avoid button overlap */
+  pre {
+    padding-top: calc(var(--space-s) + 2rem) !important;
+  }
+  
+  @media (max-width: 768px) {
+    pre {
+      padding-top: calc(var(--space-s) + 1.5rem) !important;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .copy-code-button {
+      transition: none;
+      transform: none;
+    }
+    
+    .copy-code-button:active {
+      transform: none;
+    }
+    
+    pre:hover .copy-code-button,
+    pre:focus-within .copy-code-button {
+      transform: none;
+    }
+  }
+</style>
