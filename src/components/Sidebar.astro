@@ -43,11 +43,15 @@ const currentPath = Astro.url.pathname;
           <button 
             class="sidebar__category-toggle"
             aria-expanded="true"
+            aria-describedby="category-help-{category.toLowerCase().replace(/\s+/g, '-')}"
             data-category={category.toLowerCase().replace(/\s+/g, '-')}
           >
-            <span class="sidebar__category-title">{category}</span>
+          <span class="sidebar__category-title">{category}</span>
             <i class="fas fa-chevron-down sidebar__category-icon" aria-hidden="true"></i>
           </button>
+          <div id="category-help-{category.toLowerCase().replace(/\s+/g, '-')}" class="sr-only">
+            Click to expand or collapse {category} section
+          </div>
           
           <ul class="sidebar__category-list">
             {contentByCategory[category].map((entry: any) => {

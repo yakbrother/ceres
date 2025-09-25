@@ -147,7 +147,10 @@ import { siteConfig } from '../../astro.config.mjs';
               {siteConfig.social.github && (
                 <div class="contact-item">
                   <i class="fab fa-github" aria-hidden="true"></i>
-                  <a href={`https://github.com/${siteConfig.social.github}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://github.com/${siteConfig.social.github}`} 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     aria-label="Visit our GitHub repository (opens in new tab)">
                     GitHub
                   </a>
                 </div>
@@ -156,7 +159,10 @@ import { siteConfig } from '../../astro.config.mjs';
               {siteConfig.social.twitter && (
                 <div class="contact-item">
                   <i class="fab fa-twitter" aria-hidden="true"></i>
-                  <a href={`https://twitter.com/${siteConfig.social.twitter}`} target="_blank" rel="noopener noreferrer">
+                  <a href={`https://twitter.com/${siteConfig.social.twitter}`} 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     aria-label="Follow us on Twitter (opens in new tab)">
                     Twitter
                   </a>
                 </div>

@@ -36,9 +36,13 @@ import SearchBar from './SearchBar.astro';
         id="theme-toggle" 
         class="header__action-btn"
         aria-label="Toggle dark mode"
+        aria-describedby="theme-help"
       >
         <i class="fas fa-moon" aria-hidden="true"></i>
       </button>
+      <div id="theme-help" class="sr-only">
+        Switch between light and dark color themes
+      </div>
       </div>
     </nav>
   </div>
