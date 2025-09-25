@@ -198,6 +198,36 @@ a:hover {
   border-radius: var(--radius-sm);
 }
 
+/* Enhanced focus indicators */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(106, 54, 37, 0.2);
+}
+
+/* Skip links focus */
+.skip-link:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Interactive element minimum touch target size */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Lists */
 ul,
 ol {

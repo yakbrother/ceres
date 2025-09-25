@@ -173,6 +173,16 @@
       if (searchResults) {
         searchResults.style.display = 'block';
         document.body.classList.add('search-active');
+        
+        // Set focus to first result if available
+        setTimeout(() => {
+          const firstResult = searchResults.querySelector('.search-result');
+          if (firstResult) {
+            firstResult.focus();
+          } else {
+            searchClose?.focus();
+          }
+        }, 100);
       }
     }
     
@@ -180,6 +190,8 @@
       if (searchResults) {
         searchResults.style.display = 'none';
         document.body.classList.remove('search-active');
+        // Return focus to search input
+        searchInput?.focus();
       }
     }
     
@@ -225,10 +237,38 @@
       searchClose.addEventListener('click', hideResults);
     }
     
-    // Close on escape key
+    // Enhanced keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        hideResults();
+      if (!searchResults || searchResults.style.display === 'none') return;
+      
+      const results = Array.from(searchResults.querySelectorAll('.search-result, .search-results__close'));
+      const activeElement = document.activeElement;
+      const currentIndex = results.indexOf(activeElement as HTMLElement);
+      
+      switch (e.key) {
+        case 'Escape':
+          hideResults();
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          const nextIndex = currentIndex < results.length - 1 ? currentIndex + 1 : 0;
+          (results[nextIndex] as HTMLElement)?.focus();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : results.length - 1;
+          (results[prevIndex] as HTMLElement)?.focus();
+          break;
+        case 'Tab':
+          // Allow normal tab behavior but keep within modal
+          if (e.shiftKey && currentIndex === 0) {
+            e.preventDefault();
+            (results[results.length - 1] as HTMLElement)?.focus();
+          } else if (!e.shiftKey && currentIndex === results.length - 1) {
+            e.preventDefault();
+            (results[0] as HTMLElement)?.focus();
+          }
+          break;
       }
     });
     

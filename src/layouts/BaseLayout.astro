@@ -84,6 +84,10 @@ const socialImageURL = new URL(image, Astro.url).href;
   </head>
   
   <body>
+    <!-- Skip links for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#sidebar" class="skip-link">Skip to navigation</a>
+    
     <div class={`app-layout app-layout--${layout}`}>
       <slot />
     </div>
@@ -119,8 +123,26 @@ const socialImageURL = new URL(image, Astro.url).href;
         
         if (mobileMenuToggle && sidebar) {
           mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar--open');
-            document.body.classList.toggle('sidebar-open');
+            const isOpen = sidebar.classList.contains('sidebar--open');
+            
+            if (isOpen) {
+              // Closing sidebar
+              sidebar.classList.remove('sidebar--open');
+              document.body.classList.remove('sidebar-open');
+              mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.focus();
+            } else {
+              // Opening sidebar
+              sidebar.classList.add('sidebar--open');
+              document.body.classList.add('sidebar-open');
+              mobileMenuToggle.setAttribute('aria-expanded', 'true');
+              
+              // Focus first link in sidebar for keyboard users
+              const firstLink = sidebar.querySelector('.sidebar__link');
+              if (firstLink) {
+                firstLink.focus();
+              }
+            }
           });
         }
         
@@ -128,6 +150,10 @@ const socialImageURL = new URL(image, Astro.url).href;
           overlay.addEventListener('click', () => {
             sidebar?.classList.remove('sidebar--open');
             document.body.classList.remove('sidebar-open');
+            if (mobileMenuToggle) {
+              mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.focus();
+            }
           });
         }
         
@@ -136,6 +162,10 @@ const socialImageURL = new URL(image, Astro.url).href;
           if (e.key === 'Escape' && sidebar?.classList.contains('sidebar--open')) {
             sidebar.classList.remove('sidebar--open');
             document.body.classList.remove('sidebar-open');
+            if (mobileMenuToggle) {
+              mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              mobileMenuToggle.focus();
+            }
           }
         });
       });
@@ -144,6 +174,25 @@ const socialImageURL = new URL(image, Astro.url).href;
 </html>
 
 <style>
+  /* Skip links for keyboard accessibility */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-accent);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 1000;
+    font-weight: 600;
+    transition: top 0.2s ease;
+  }
+  
+  .skip-link:focus {
+    top: 6px;
+  }
+  
   .app-layout {
     min-height: 100vh;
   }
