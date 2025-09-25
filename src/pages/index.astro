@@ -14,9 +14,11 @@ import { siteConfig } from '../../astro.config.mjs';
     <div class="homepage">
       <div class="homepage__container">
         <section class="hero">
-          <h1 class="hero__title">
-            Welcome to <span class="hero__accent">{siteConfig.title}</span>
-          </h1>
+          <header>
+            <h1 class="hero__title">
+              Welcome to <span class="hero__accent">{siteConfig.title}</span>
+            </h1>
+          </header>
           <p class="hero__description">
             {siteConfig.description}
           </p>
@@ -30,14 +32,17 @@ import { siteConfig } from '../../astro.config.mjs';
             functionality to quickly find specific information. Whether you're looking for technical 
             documentation, guides, or reference materials, everything is organized and easily accessible.
           </p>
-          <div class="hero__actions">
+          <section class="hero__cta">
+            <h2 class="sr-only">Get Started</h2>
+            <div class="hero__actions">
             <a href="/docs/getting-started/introduction" class="btn btn--primary">
               Get Started
             </a>
             <a href="/docs/guides/writing-content" class="btn btn--secondary">
               Learn More
             </a>
-          </div>
+            </div>
+          </section>
         </section>
       </div>
     </div>

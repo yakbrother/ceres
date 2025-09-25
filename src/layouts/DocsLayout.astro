@@ -34,7 +34,7 @@ const {
   <main id="main-content" class="main-content" role="main">
     <!-- Table of Contents for mobile/medium screens -->
     <div class="toc-mobile-wrapper">
-      <TableOfContents headings={headings} />
+      <TableOfContents headings={headings} headingLevel={2} />
     </div>
     
     <article class="article">
@@ -80,7 +80,7 @@ const {
   </main>
   
   <!-- Table of Contents for desktop -->
-  <TableOfContents headings={headings} />
+  <TableOfContents headings={headings} headingLevel={2} />
   
   <Footer />
 </BaseLayout>

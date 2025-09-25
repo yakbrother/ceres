@@ -5,21 +5,25 @@ export interface Props {
     slug: string;
     text: string;
   }>;
+  headingLevel?: 2 | 3 | 4;
 }
 
-const { headings } = Astro.props;
+const { headings, headingLevel = 2 } = Astro.props;
 
 // Filter to only show H2 and H3 headings for better UX
 const filteredHeadings = headings.filter(heading => heading.depth <= 3);
+
+// Create the appropriate heading tag
+const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 ---
 
 {filteredHeadings.length > 0 && (
   <aside class="toc" role="complementary" aria-label="Table of contents" id="toc-container">
     <div class="toc__content">
-      <h3 class="toc__title">
+      <HeadingTag class="toc__title">
         <i class="fas fa-list" aria-hidden="true"></i>
         On this page
-      </h3>
+      </HeadingTag>
       
       <!-- Mobile dropdown toggle -->
       <button 
