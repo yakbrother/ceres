@@ -1,6 +1,8 @@
 ---
 title: "Web Accessibility Essentials"
 description: "Essential accessibility practices for building inclusive digital gardens that work for everyone"
+category: "docs"
+lastUpdated: "2024-07-29"
 ---
 
 # Web Accessibility Essentials

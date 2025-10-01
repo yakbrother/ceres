@@ -4,7 +4,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Sidebar from '../components/Sidebar.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
 import CopyCodeButton from '../components/CopyCodeButton.astro';
 
 export interface Props {
@@ -28,8 +27,6 @@ const {
   category
 } = Astro.props;
 
-// Get current path for breadcrumbs
-const currentPath = Astro.url.pathname;
 ---
 
 <BaseLayout title={title} description={description} article={true} layout="docs">
@@ -43,8 +40,6 @@ const currentPath = Astro.url.pathname;
     </div>
     
     <article class="article">
-      <!-- Breadcrumb Navigation -->
-      <Breadcrumb category={category} title={title} currentPath={currentPath} />
       
       <header class="article__header">
         {category && (
@@ -104,25 +99,23 @@ const currentPath = Astro.url.pathname;
     max-width: 100%;
   }
   
+  /* Fluid ToC visibility using container queries - no fixed breakpoints */
   .toc-mobile-wrapper {
-    display: none;
+    container-type: inline-size;
   }
   
-  /* Show mobile ToC wrapper only on smaller screens */
-  @media (max-width: 1199px) {
+  /* Show mobile ToC wrapper when container has limited space and desktop ToC is hidden */
+  @container (max-width: 75rem) {
     .toc-mobile-wrapper {
       display: block;
-    }
-    
-    .toc-mobile-wrapper :global(.toc) {
-      /* Add mobile class via JavaScript since Astro doesn't support conditional classes easily */
+      margin-bottom: var(--space-m);
     }
   }
   
-  /* Hide mobile ToC wrapper on desktop */
-  @media (min-width: 1200px) {
+  /* Hide mobile ToC wrapper when there's ample space for desktop ToC */
+  @container (min-width: 75rem) {
     .toc-mobile-wrapper {
-      display: none;
+      display: none !important;
     }
   }
   
@@ -278,8 +271,8 @@ const currentPath = Astro.url.pathname;
     text-decoration: underline;
   }
   
-  /* Mobile adjustments */
-  @media (max-width: 1024px) {
+  /* Container-based responsive adjustments using fluid design principles */
+  @container (max-width: 64rem) {
     .main-content {
       padding: var(--space-xs);
     }
@@ -293,7 +286,7 @@ const currentPath = Astro.url.pathname;
     }
   }
   
-  @media (max-width: 640px) {
+  @container (max-width: 40rem) {
     .article__header {
       margin-bottom: var(--space-l);
       padding-bottom: var(--space-s);

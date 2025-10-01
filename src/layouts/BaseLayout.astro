@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '../../astro.config.mjs';
 import '../styles/global.css';
+import '../styles/code.css';
 
 export interface Props {
   title?: string;
@@ -344,6 +345,9 @@ const socialImageURL = new URL(image, Astro.url).href;
         });
       });
     </script>
+    
+    <!-- Code block enhancements -->
+    <script src="/code-blocks.js" is:inline></script>
   </body>
 </html>
 

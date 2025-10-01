@@ -149,8 +149,13 @@ import SearchBar from './SearchBar.astro';
     transform: translateY(0);
   }
   
-  /* Mobile styles - Small screens: show hamburger, keep search visible */
-  @media (max-width: 767px) {
+  /* Container-based responsive behavior - fluid design approach */
+  .header__container {
+    container-type: inline-size;
+  }
+  
+  /* Use container queries for fluid responsive behavior */
+  @container (max-width: 48rem) {
     .header__mobile-toggle {
       display: flex;
       align-items: center;
@@ -158,7 +163,7 @@ import SearchBar from './SearchBar.astro';
     }
   }
   
-  @media (max-width: 640px) {
+  @container (max-width: 40rem) {
     .header__container {
       padding: 0 var(--space-xs);
       gap: var(--space-xs);
@@ -169,7 +174,7 @@ import SearchBar from './SearchBar.astro';
     }
     
     .header__search {
-      max-width: 200px;
+      max-width: clamp(12rem, 40cqi, 25rem);
     }
     
     .header__actions {
@@ -177,9 +182,21 @@ import SearchBar from './SearchBar.astro';
     }
     
     .header__action-btn {
-      width: 2.25rem;
-      height: 2.25rem;
+      width: clamp(2.25rem, 8cqi, 2.5rem);
+      height: clamp(2.25rem, 8cqi, 2.5rem);
       font-size: var(--step--1);
     }
+  }
+  
+  /* Intrinsic design - header adapts based on content and available space */
+  .header__nav {
+    /* Use flex with min-width constraints for natural responsive behavior */
+    min-width: 0; /* Allow shrinking */
+  }
+  
+  .header__search {
+    /* Fluid width that responds to container size */
+    min-width: clamp(10rem, 30cqi, 25rem);
+    max-width: min(25rem, 60%);
   }
 </style>

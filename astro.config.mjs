@@ -23,9 +23,14 @@ export default defineConfig({
   integrations: [mdx(), sitemap()],
   markdown: {
     shikiConfig: {
-      theme: "github-dark-dimmed",
+      themes: {
+        light: "github-light",
+        dark: "github-dark-dimmed",
+      },
       wrap: true,
+      transformers: [],
     },
+    syntaxHighlight: "shiki",
   },
   vite: {
     optimizeDeps: {

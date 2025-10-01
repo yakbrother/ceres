@@ -164,10 +164,15 @@ const currentPath = Astro.url.pathname;
     overflow-y: auto;
   }
   
-  /* Hide sidebar on small screens (will be shown as hamburger menu) */
-  @media (max-width: 767px) {
+  /* Container-based responsive sidebar behavior */
+  .sidebar {
+    container-type: inline-size;
+  }
+  
+  /* Use container queries for fluid responsive behavior */
+  @container (max-width: 48rem) {
     .sidebar {
-      display: none;
+      display: none; /* Hidden on smaller containers - shown via mobile toggle */
     }
   }
   
@@ -308,7 +313,7 @@ const currentPath = Astro.url.pathname;
       transform: translateX(-100%);
       transition: transform var(--transition-medium);
       box-shadow: var(--shadow-lg);
-      background-color: var(--color-dropdown-bg);
+      background-color: var(--color-bg-secondary);
     }
     
     .sidebar--open {

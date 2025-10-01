@@ -121,7 +121,7 @@ import { siteConfig } from '../../astro.config.mjs';
             <p>
               Ready to build your own digital brain? Check out our comprehensive documentation:
             </p>
-            <div class="cta-buttons">
+            <div class="cta-buttons fluid-flex">
               <a href="/docs/getting-started/introduction" class="btn btn--primary">
                 <i class="fas fa-rocket" aria-hidden="true"></i>
                 Get Started
@@ -362,14 +362,14 @@ import { siteConfig } from '../../astro.config.mjs';
     text-decoration: underline;
   }
   
-  /* Mobile Styles */
-  @media (max-width: 1024px) {
+  /* Fluid responsive design using container queries - no fixed breakpoints */
+  @container (max-width: 64rem) {
     .main-content {
       padding: var(--space-xs);
     }
   }
   
-  @media (max-width: 768px) {
+  @container (max-width: 48rem) {
     .about-page {
       padding: var(--space-l) 0;
     }
@@ -390,8 +390,8 @@ import { siteConfig } from '../../astro.config.mjs';
       padding: var(--space-l);
     }
     
-    .cta-buttons {
-      flex-direction: column;
+    .cta-buttons.fluid-flex {
+      --fluid-flex-min: 180px;
     }
     
     .btn {

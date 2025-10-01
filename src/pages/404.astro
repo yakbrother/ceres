@@ -26,7 +26,7 @@ import Sidebar from '../components/Sidebar.astro';
           It might have been moved, deleted, or you entered the wrong URL.
         </p>
         
-        <div class="error-actions">
+        <div class="error-actions fluid-flex">
           <a href="/" class="btn btn--primary">
             <i class="fas fa-home" aria-hidden="true"></i>
             Go Home
@@ -277,14 +277,14 @@ import Sidebar from '../components/Sidebar.astro';
     background-color: var(--color-accent-hover);
   }
   
-  /* Mobile Styles */
-  @media (max-width: 1024px) {
+  /* Fluid responsive design using container queries - no fixed breakpoints */
+  @container (max-width: 64rem) {
     .main-content {
       padding: var(--space-xs);
     }
   }
   
-  @media (max-width: 640px) {
+  @container (max-width: 40rem) {
     .error-page {
       padding: var(--space-l) var(--space-xs);
     }
@@ -297,8 +297,8 @@ import Sidebar from '../components/Sidebar.astro';
       font-size: var(--step--1);
     }
     
-    .error-actions {
-      flex-direction: column;
+    .error-actions.fluid-flex {
+      --fluid-flex-min: 200px;
       align-items: center;
     }
     

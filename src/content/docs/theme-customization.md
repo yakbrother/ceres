@@ -1,6 +1,8 @@
 ---
 title: "Theme Customization"
 description: "Customize colors, fonts, and layouts to make your digital garden uniquely yours"
+category: "Customizing"
+lastUpdated: "2023-11-20"
 ---
 
 # Theme Customization
@@ -20,19 +22,19 @@ Use CSS variables for consistent theming across your site:
   --color-surface: #f8fafc;
   --color-text: #1e293b;
   --color-text-muted: #64748b;
-  
+
   /* Typography */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-size-base: 1rem;
   --line-height: 1.6;
-  
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
   --space-lg: 2rem;
   --space-xl: 4rem;
-  
+
   /* Borders & Shadows */
   --border-radius: 0.5rem;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -76,23 +78,23 @@ Create a seamless dark/light mode toggle:
 ```javascript path=null start=null
 // Theme toggle functionality
 function initTheme() {
-  const theme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', theme);
+  const theme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", theme);
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
 }
 
 // Initialize on page load
 initTheme();
 
 // Add toggle button
-document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
 ```
 
 ## Typography Customization
@@ -111,16 +113,27 @@ Fine-tune your text for better readability:
 }
 
 /* Heading styles */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--color-text);
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--space-md);
 }
 
-h1 { font-size: var(--font-size-3xl); }
-h2 { font-size: var(--font-size-2xl); }
-h3 { font-size: var(--font-size-xl); }
+h1 {
+  font-size: var(--font-size-3xl);
+}
+h2 {
+  font-size: var(--font-size-2xl);
+}
+h3 {
+  font-size: var(--font-size-xl);
+}
 
 /* Body text */
 p {
@@ -130,7 +143,7 @@ p {
 
 /* Code styling */
 code {
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   background: var(--color-surface);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
@@ -287,7 +300,7 @@ Make your theme work on all devices:
   .nav {
     flex-direction: column;
   }
-  
+
   .card {
     margin-bottom: var(--space-md);
   }
@@ -301,46 +314,46 @@ Allow users to choose from multiple themes:
 ```javascript path=null start=null
 const themes = {
   light: {
-    '--color-background': '#ffffff',
-    '--color-text': '#1e293b',
-    '--color-primary': '#3b82f6'
+    "--color-background": "#ffffff",
+    "--color-text": "#1e293b",
+    "--color-primary": "#3b82f6",
   },
   dark: {
-    '--color-background': '#0f172a',
-    '--color-text': '#f1f5f9',
-    '--color-primary': '#60a5fa'
+    "--color-background": "#0f172a",
+    "--color-text": "#f1f5f9",
+    "--color-primary": "#60a5fa",
   },
   nature: {
-    '--color-background': '#f0fdf4',
-    '--color-text': '#166534',
-    '--color-primary': '#22c55e'
-  }
+    "--color-background": "#f0fdf4",
+    "--color-text": "#166534",
+    "--color-primary": "#22c55e",
+  },
 };
 
 function applyTheme(themeName) {
   const theme = themes[themeName];
   const root = document.documentElement;
-  
+
   Object.entries(theme).forEach(([property, value]) => {
     root.style.setProperty(property, value);
   });
-  
-  localStorage.setItem('theme', themeName);
+
+  localStorage.setItem("theme", themeName);
 }
 
 // Theme selector
 function createThemeSelector() {
-  const selector = document.createElement('select');
+  const selector = document.createElement("select");
   selector.innerHTML = `
     <option value="light">Light</option>
     <option value="dark">Dark</option>
     <option value="nature">Nature</option>
   `;
-  
-  selector.addEventListener('change', (e) => {
+
+  selector.addEventListener("change", (e) => {
     applyTheme(e.target.value);
   });
-  
+
   return selector;
 }
 ```

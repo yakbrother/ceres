@@ -1,6 +1,8 @@
 ---
 title: "Digital Garden Concepts"
 description: "Understand digital gardens, how they differ from blogs, and how to create your own knowledge ecosystem"
+category: "Concepts"
+lastUpdated: "2024-01-01"
 ---
 
 # Digital Garden Concepts

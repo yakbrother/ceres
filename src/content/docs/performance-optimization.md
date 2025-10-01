@@ -1,4 +1,6 @@
 ---
+category: "Docs"
+lastUpdated: "2023-11-20"
 title: "Performance Optimization"
 description: "Optimize your digital garden for speed with image optimization, Core Web Vitals, and modern performance techniques"
 ---

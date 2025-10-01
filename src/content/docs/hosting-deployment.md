@@ -1,6 +1,8 @@
 ---
 title: "Hosting & Deployment"
 description: "Choose the right hosting platform and set up automated deployment for your digital garden"
+category: "Deployment"
+lastUpdated: "2023-11-20"
 ---
 
 # Hosting & Deployment

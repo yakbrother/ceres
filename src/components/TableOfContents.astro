@@ -314,15 +314,15 @@ const HeadingTag = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
     transition: transform var(--transition-medium);
   }
   
-  /* Hide mobile/dropdown ToC on desktop */
-  @media (min-width: 1200px) {
+  /* Hide mobile/dropdown ToC when desktop ToC has space */  
+  @container (min-width: 75rem) {
     .toc--mobile {
-      display: none;
+      display: none !important;
     }
   }
   
-  /* Mobile/Medium screens styles - show ToC as dropdown in main content */
-  @media (max-width: 1199px) {
+  /* Mobile ToC styles - show as dropdown when desktop ToC is hidden */
+  @container (max-width: 75rem) {
     .toc {
       position: relative;
       height: auto;

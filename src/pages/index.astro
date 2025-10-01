@@ -34,7 +34,7 @@ import { siteConfig } from '../../astro.config.mjs';
           </p>
           <section class="hero__cta">
             <h2 class="sr-only">Get Started</h2>
-            <div class="hero__actions">
+            <div class="hero__actions fluid-flex" style="--fluid-flex-min: 180px;">
             <a href="/docs/getting-started/introduction" class="btn btn--primary">
               Get Started
             </a>
@@ -100,10 +100,8 @@ import { siteConfig } from '../../astro.config.mjs';
   }
   
   .hero__actions {
-    display: flex;
-    gap: var(--space-s);
-    flex-wrap: wrap;
     margin-top: var(--space-l);
+    /* Layout utility classes handle the flex behavior */
   }
   
   .btn {
@@ -144,8 +142,17 @@ import { siteConfig } from '../../astro.config.mjs';
     text-decoration: none;
   }
   
-  /* Mobile adjustments */
-  @media (max-width: 1024px) {
+  /* Container-based responsive adjustments using fluid design principles */
+  .main-content {
+    container-type: inline-size;
+  }
+  
+  .homepage__container {
+    /* Use fluid layout utilities for the action buttons */
+    gap: clamp(var(--space-s), 5cqi, var(--space-l));
+  }
+  
+  @container (max-width: 64rem) {
     .main-content {
       padding: var(--space-xs);
     }
@@ -155,7 +162,7 @@ import { siteConfig } from '../../astro.config.mjs';
     }
   }
   
-  @media (max-width: 640px) {
+  @container (max-width: 40rem) {
     .homepage__container {
       padding: var(--space-s);
     }
@@ -173,6 +180,7 @@ import { siteConfig } from '../../astro.config.mjs';
     
     .hero__actions {
       flex-direction: column;
+      gap: var(--space-s);
     }
     
     .btn {

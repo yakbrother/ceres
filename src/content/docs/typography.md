@@ -1,6 +1,8 @@
 ---
 title: "Typography & Fonts"
 description: "Choose and optimize fonts for better readability and performance in your digital garden"
+category: "Customizing"
+lastUpdated: "2024-07-30"
 ---
 
 # Typography & Fonts
@@ -14,16 +16,16 @@ Choose fonts that enhance readability and reflect your garden's personality:
 ```css path=null start=null
 /* System font stack for performance */
 :root {
-  --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
-                 Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Consolas', monospace;
+  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", Monaco, "Cascadia Code", "Consolas", monospace;
 }
 
 /* Web fonts for character */
 :root {
-  --font-serif: 'Crimson Text', Georgia, serif;
-  --font-sans: 'Inter', var(--font-system);
-  --font-mono: 'Fira Code', var(--font-mono);
+  --font-serif: "Crimson Text", Georgia, serif;
+  --font-sans: "Inter", var(--font-system);
+  --font-mono: "Fira Code", var(--font-mono);
 }
 
 body {
@@ -41,34 +43,39 @@ Load fonts strategically to avoid layout shifts and improve performance:
 
 ```html path=null start=null
 <!-- Preconnect to font services -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
 <!-- Load critical fonts with font-display: swap -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
 
 <!-- Preload the most critical font file -->
-<link rel="preload" 
-      href="/fonts/inter-regular.woff2" 
-      as="font" 
-      type="font/woff2" 
-      crossorigin>
+<link
+  rel="preload"
+  href="/fonts/inter-regular.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 ```
 
 ```css path=null start=null
 /* Self-hosted fonts with proper fallbacks */
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/inter-regular.woff2') format('woff2'),
-       url('/fonts/inter-regular.woff') format('woff');
+  font-family: "Inter";
+  src: url("/fonts/inter-regular.woff2") format("woff2"), url("/fonts/inter-regular.woff")
+      format("woff");
   font-weight: 400;
   font-style: normal;
   font-display: swap; /* Show fallback immediately, swap when loaded */
 }
 
 @font-face {
-  font-family: 'Inter';
-  src: url('/fonts/inter-medium.woff2') format('woff2');
+  font-family: "Inter";
+  src: url("/fonts/inter-medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -89,7 +96,7 @@ Create a harmonious type scale for consistent hierarchy:
   --font-size-xl: clamp(1.25rem, 4vw, 1.5rem);
   --font-size-2xl: clamp(1.5rem, 5vw, 2rem);
   --font-size-3xl: clamp(2rem, 6vw, 2.5rem);
-  
+
   /* Line heights for different contexts */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
@@ -97,20 +104,20 @@ Create a harmonious type scale for consistent hierarchy:
 }
 
 /* Apply to headings */
-h1 { 
-  font-size: var(--font-size-3xl); 
+h1 {
+  font-size: var(--font-size-3xl);
   line-height: var(--line-height-tight);
   font-weight: 600;
 }
 
-h2 { 
-  font-size: var(--font-size-2xl); 
+h2 {
+  font-size: var(--font-size-2xl);
   line-height: var(--line-height-tight);
   font-weight: 500;
 }
 
-h3 { 
-  font-size: var(--font-size-xl); 
+h3 {
+  font-size: var(--font-size-xl);
   line-height: var(--line-height-normal);
 }
 
@@ -158,10 +165,18 @@ pre code {
 }
 
 /* Syntax highlighting with CSS */
-.token.comment { color: hsl(220, 10%, 50%); }
-.token.keyword { color: hsl(286, 60%, 67%); }
-.token.string { color: hsl(119, 34%, 47%); }
-.token.number { color: hsl(35, 99%, 36%); }
+.token.comment {
+  color: hsl(220, 10%, 50%);
+}
+.token.keyword {
+  color: hsl(286, 60%, 67%);
+}
+.token.string {
+  color: hsl(119, 34%, 47%);
+}
+.token.number {
+  color: hsl(35, 99%, 36%);
+}
 ```
 
 ## Responsive Typography
@@ -187,13 +202,16 @@ body {
     font-size: 1rem;
     line-height: 1.5;
   }
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     line-height: 1.2;
   }
-  
+
   /* Slightly larger tap targets on mobile */
-  a, button {
+  a,
+  button {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
@@ -215,39 +233,39 @@ Monitor and optimize font loading:
 
 ```javascript path=null start=null
 // Check if fonts loaded successfully
-if ('fonts' in document) {
+if ("fonts" in document) {
   document.fonts.ready.then(() => {
-    console.log('All fonts loaded');
-    document.documentElement.classList.add('fonts-loaded');
+    console.log("All fonts loaded");
+    document.documentElement.classList.add("fonts-loaded");
   });
 }
 
 // Font loading timeout fallback
 setTimeout(() => {
-  document.documentElement.classList.add('fonts-timeout');
+  document.documentElement.classList.add("fonts-timeout");
 }, 3000);
 
 // Preload fonts based on user interaction
 function preloadFonts() {
   const fontUrls = [
-    '/fonts/inter-medium.woff2',
-    '/fonts/fira-code-regular.woff2'
+    "/fonts/inter-medium.woff2",
+    "/fonts/fira-code-regular.woff2",
   ];
-  
-  fontUrls.forEach(url => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'font';
-    link.type = 'font/woff2';
-    link.crossOrigin = 'anonymous';
+
+  fontUrls.forEach((url) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "font";
+    link.type = "font/woff2";
+    link.crossOrigin = "anonymous";
     link.href = url;
     document.head.appendChild(link);
   });
 }
 
 // Preload on first interaction
-document.addEventListener('mouseenter', preloadFonts, { once: true });
-document.addEventListener('touchstart', preloadFonts, { once: true });
+document.addEventListener("mouseenter", preloadFonts, { once: true });
+document.addEventListener("touchstart", preloadFonts, { once: true });
 ```
 
 ## Typography Accessibility
@@ -270,7 +288,7 @@ Ensure your text is readable for everyone:
     --color-text: #000000;
     --color-background: #ffffff;
   }
-  
+
   code {
     border: 1px solid currentColor;
   }
@@ -297,15 +315,29 @@ Helpful utility classes for common typography needs:
 
 ```css path=null start=null
 /* Text sizes */
-.text-xs { font-size: var(--font-size-xs); }
-.text-sm { font-size: var(--font-size-sm); }
-.text-base { font-size: var(--font-size-base); }
-.text-lg { font-size: var(--font-size-lg); }
+.text-xs {
+  font-size: var(--font-size-xs);
+}
+.text-sm {
+  font-size: var(--font-size-sm);
+}
+.text-base {
+  font-size: var(--font-size-base);
+}
+.text-lg {
+  font-size: var(--font-size-lg);
+}
 
 /* Font weights */
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
+.font-normal {
+  font-weight: 400;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
 
 /* Text styles */
 .lead {
